@@ -2,17 +2,18 @@
   "manifest_version": 2,
 
   "name": "Autoload Web",
+  "options_page": "options.html",
   "description": "This extension loads websites automatically with a click of a button.",
   "version": "1.0",
 
   "permissions": [
     "tabs",
-    "unlimitedStorage",
+    "storage",
     "http://*.google.com/"
   ],
   "browser_action": {
     "default_icon": "AutoLoadWebPic.png",
-    "default_title": "Autoad Web",
+    "default_title": "Autoload Web",
     "default_popup": "AutoLoadWeb_Main.html"
   }
 } 
