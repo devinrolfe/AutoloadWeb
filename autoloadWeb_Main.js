@@ -43,11 +43,11 @@ var autoloadWebObject = {
 		}
 		//create option buttons, should be 3 option buttons
 		//1. add current website to...
-		//2. create new choice
-		//3. modify choices
+		//2. Options - create/modify choices
 		var optionsRow = document.createElement("TR");
 		optionsRow.setAttribute("id", "optionRow");
 		table.appendChild(optionsRow);
+		//1 and 2 will not be buttons but instead text when clicked does stuff(css)
 		//1.
 		var option1 = document.createElement("TD");
 		var option1Button = document.createElement("INPUT");
@@ -58,37 +58,28 @@ var autoloadWebObject = {
 		option1.appendChild(option1Button);
 		optionsRow.appendChild(option1);
 		//2.
-		var option2 = document.createElement("TD");
-		var option2Button = document.createElement("INPUT");
-		option2Button.setAttribute("type", "button");
-		option2Button.setAttribute("name", "option2");
-		option2Button.setAttribute("id", "option2");
-		option2Button.setAttribute("value", "create new choice");
-		option2.appendChild(option2Button);
-		optionsRow.appendChild(option2);
+		var options = document.createElement("TD");
+		var optionsButton = document.createElement("INPUT");
+		optionsButton.setAttribute("type", "button");
+		optionsButton.setAttribute("name", "options");
+		optionsButton.setAttribute("id", "options");
+		optionsButton.setAttribute("value", "Options");
+		options.appendChild(optionsButton);
+		optionsRow.appendChild(options);
 		//create action listener for option2; will open a new window where
 		//the user can create their new choice.
-		option2Button.addEventListener("click", createNewChoice);
-		//3.
-		var option3 = document.createElement("TD");
-		var option3Button = document.createElement("INPUT");
-		option3Button.setAttribute("type", "button");
-		option3Button.setAttribute("name", "option3");
-		option3Button.setAttribute("id", "option3");
-		option3Button.setAttribute("value", "modify choices");
-		option3.appendChild(option3Button);
-		optionsRow.appendChild(option3);
-
-
+		optionsButton.addEventListener("click", optionsFunction);
 	}
-
 
 };
 
 
 
-function createNewChoice(){
-	
+function optionsFunction(){
+	//this will open the options.html, but before I do this I
+	//should check a saved value to see if the options page,
+	//is already open, if so then just switch to it.
+	chrome.tabs.create({url: "options.html"}); 
 }
 
 
