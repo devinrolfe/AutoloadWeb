@@ -5,25 +5,30 @@
       <style>
       </style>
       <script src="options.js"></script>
+      <script src="autoWebObjects.js"></script>
     </head>
     <body>
       <h1>Add New Choice</h1>
       <div id="addNewChoice" class="hide">
-          <dl>
-            <dt>
-              <label for="addChoiceName">Name:</label>
-              <input type="text" class="input" name="addChoiceName" value="" id="addChoiceName" size="12">
-            </dt>
-            <div id="addNewChoiceList">
-              <dd>
-                <label for="addChoiceURL">URL(Optional):</label>
-                <input type="text" class="input" name="addChoiceURL" value="" id="addChoiceURL" size="12">
-                <input id="addNewChoiceURLButton" type="button" value="(+) add URL"/>
-              </dd>
+          <div id="addChoiceNameNameInput">
+            <label for="addChoiceName">Name:</label>
+            <input type="text" class="input" name="addChoiceName" value="" id="addChoiceName" size="12">
+          </div>
+          <div id="addNewChoiceList">
+            <div id="window1">
+              <h3>Window 1</h3>
+              <dl>
+                <dd>
+                  <label for="addChoiceURL1">URL(Required): </label>
+                  <input type="text" class="urlInput" name="addChoiceURL1" value="" id="addChoiceURL1" size="30">
+                  <input id="addNewChoiceURLButton1" type="button" value="(+) add URL"/>
+                </dd>
+              </dl>
             </div>
-        </dl>
-        <br>
-        <input id="saveAddNewChoice" type="button" value="Save"/>
+            <input id="addNewChoiceWindowButton" type="button" value="(+) Add a new window"/>
+          </div>
+          <br>
+          <input id="saveAddNewChoice" type="button" value="Save"/>
       </div>
       <h1>Modify Saved Choices</h1>
       <div id="modifySavedChoices" class="hide">
