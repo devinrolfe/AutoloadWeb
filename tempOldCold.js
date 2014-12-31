@@ -2,8 +2,8 @@
 var addNewChoiceWindowCount = 1;
 var addNewChoiceTabCount = 1;
 
-//var asyncChecker = 0;
-//var boolReturn = 0;
+var asyncChecker = 0;
+var boolReturn = 0;
 
 //Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
@@ -147,16 +147,18 @@ function saveNewChoice(){
 	//need to check if name is not used yet, if it is return, and insert message already exist
 	//remove insert message if name does not exist
 	chrome.storage.sync.get(["webChoicesList"], function(items){
-
-		//asyncChecker = 0;
-		var boolReturn = 0;
+		asyncChecker = 0;
+		boolReturn = 0;
 		if(name == ''){
+			alert(1);
 			boolReturn = 1;
 		}
 		else if(items == null || items.webChoicesList == null){
+			alert(2);
 			boolReturn = 0;
 		}
 		else{
+			alert(3);
 			savedWebChoicesList = JSON.parse(items.webChoicesList);
 			alert("existed: " + savedWebChoicesList);
 			for(i=0; i<savedWebChoicesList.length; i++){
@@ -165,70 +167,62 @@ function saveNewChoice(){
 				}
 			}
 		}
-		//asyncChecker = 1;
+		asyncChecker = 1;
+	});	
+
+	//wait until the async function call is finished to continue.
+	
+	while(!asyncChecker){
+		//sleep(500);
+		window.setTimeout(function(){ alert("waiting..."); }, 500);
+	}
+	
+	alert("OK");
+	//if name already exists, insert error message and return
+	if(boolReturn){
+		alert("name already existed, not saving");
+		return;
+	}
+	else{
+		alert("We good no choice already exist.");
+	}
+
+	var webChoices = new WebsiteChoice(name);
+	var tempWindows = document.getElementById("addNewChoiceList").getElementsByTagName("DIV");
+	
+	for(i=0; i<tempWindows.length; i++){
+		var tempWindow = new WebsiteWindow(i);
+		var tempTabs = tempWindows[i].getElementsByClassName("urlInput");
+		
+		for(j=0; j<tempTabs.length; j++){
+			//check first url is not empty, else insert message like above
+			if((tempTabs[j].value != '') || (tempTabs[j].value != tempTabs[j].defaultValue)){
+				var tempTab = new WebsiteTab(j, tempTabs[j].value);
+				tempWindow.tabs.push(tempTab);
+				
+			}
+		}
+		
+		webChoices.windows.push(tempWindow);
+		
+	}
+
+	//alert(JSON.stringify(webChoices));
+	//error happening on this line
+	if(savedWebChoicesList == null){
+		savedWebChoicesList = [];
+	}
+	savedWebChoicesList.push(JSON.stringify(webChoices))
+	alert("Save: " + JSON.stringify(savedWebChoicesList));
+
+	/*
+	chrome.storage.sync.set({'webChoicesList': savedWebChoicesList}, function(){
+		message('Settings saved');
+	});
+	*/
+
 	
 
-		//wait until the async function call is finished to continue.
-		/*
-		while(!asyncChecker){
-			//sleep(500);
-			window.setTimeout(function(){ alert("waiting..."); }, 500);
-		}
-		*/
-		
-		boolReturn = 1;
-		//if name already exists, insert error message and return
-		if(boolReturn){
-			alert("name already existed, not saving");
-			var name = document.getElementById("addChoiceName").value;
-
-			var tempLabel = document.getElementById.("addChoiceName");
-			var tempparent = tempLabel.parentNode;
-			
-			var newChoiceErrorName = createElement("LABEL");
-			newChoiceErrorName.setAttribute("for", "addChoiceName");
-			newChoiceErrorName.innerHTML = "Name already exist, choose another.";
-			tempParent.appendChild(newChoiceErrorName);
-			
-			return;
-		}
-		else{
-			alert("We good no choice already exist.");
-		}
-
-		var webChoices = new WebsiteChoice(name);
-		var tempWindows = document.getElementById("addNewChoiceList").getElementsByTagName("DIV");
-		
-		for(i=0; i<tempWindows.length; i++){
-			var tempWindow = new WebsiteWindow(i);
-			var tempTabs = tempWindows[i].getElementsByClassName("urlInput");
-			
-			for(j=0; j<tempTabs.length; j++){
-				//check first url is not empty, else insert message like above
-				if((tempTabs[j].value != '') || (tempTabs[j].value != tempTabs[j].defaultValue)){
-					var tempTab = new WebsiteTab(j, tempTabs[j].value);
-					tempWindow.tabs.push(tempTab);
-					
-				}
-			}
-			
-			webChoices.windows.push(tempWindow);
-			
-		}
-
-		if(savedWebChoicesList == null){
-			savedWebChoicesList = [];
-		}
-		savedWebChoicesList.push(JSON.stringify(webChoices))
-		alert("Save: " + JSON.stringify(savedWebChoicesList));
-
-		/*
-		chrome.storage.sync.set({'webChoicesList': savedWebChoicesList}, function(){
-			message('Settings saved');
-		});
-		*/
-		//NEED TO ADD A LISTENER TO THIS TO UPDATE MODIFY INFO
-	});	
 }
 
 	/*
