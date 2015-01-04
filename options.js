@@ -180,13 +180,13 @@ function saveNewChoice(){
 		//if name already exists, insert error message and return
 		if(boolReturn){
 			alert("name already existed, not saving");
-			var name = document.getElementById("addChoiceName").value;
-
-			var tempLabel = document.getElementById.("addChoiceName");
-			var tempparent = tempLabel.parentNode;
 			
-			var newChoiceErrorName = createElement("LABEL");
+			var tempLabel = document.getElementById("addChoiceName");
+			var tempParent = tempLabel.parentNode;
+			
+			var newChoiceErrorName = document.createElement("LABEL");
 			newChoiceErrorName.setAttribute("for", "addChoiceName");
+			newChoiceErrorName.setAttribute("id", "newChoiceNameErrorMsg");
 			newChoiceErrorName.innerHTML = "Name already exist, choose another.";
 			tempParent.appendChild(newChoiceErrorName);
 			
