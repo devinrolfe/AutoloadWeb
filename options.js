@@ -108,6 +108,10 @@ function addAnotherWindowToNewChoice(){
 	tempButton.setAttribute("value", "(+) add URL");
 	tempButton.addEventListener("click", addAnotherURLToNewChoice);
 	tempDD.appendChild(tempButton);
+
+	var tempErrorDiv = document.createElement("DIV");
+	tempErrorDiv.setAttribute("id", "windowFirstURLErrorMsg" + addNewChoiceWindowCount);
+	tempDD.appendChild(tempErrorDiv);
 }
 
 function deleteWindowNewChoice(){
@@ -165,35 +169,36 @@ function saveNewChoice(){
 				}
 			}
 		}
-		//asyncChecker = 1;
-	
-
-		//wait until the async function call is finished to continue.
-		/*
-		while(!asyncChecker){
-			//sleep(500);
-			window.setTimeout(function(){ alert("waiting..."); }, 500);
-		}
-		*/
 		
-		boolReturn = 1;
+		//boolReturn = 1; //DELETE LINE AFTER ---------------------------
 		//if name already exists, insert error message and return
 		if(boolReturn){
 			alert("name already existed, not saving");
-			
-			var tempLabel = document.getElementById("addChoiceName");
-			var tempParent = tempLabel.parentNode;
-			
-			var newChoiceErrorName = document.createElement("LABEL");
-			newChoiceErrorName.setAttribute("for", "addChoiceName");
-			newChoiceErrorName.setAttribute("id", "newChoiceNameErrorMsg");
-			newChoiceErrorName.innerHTML = "Name already exist, choose another.";
-			tempParent.appendChild(newChoiceErrorName);
-			
+
+			//check if error message already exists
+			if(document.getElementById("newChoiceNameErrorMsg") == null){
+				var tempLabel = document.getElementById("addChoiceName");
+				var tempParent = tempLabel.parentNode;
+				
+				var newChoiceErrorName = document.createElement("LABEL");
+				newChoiceErrorName.setAttribute("for", "addChoiceName");
+				newChoiceErrorName.setAttribute("id", "newChoiceNameErrorMsg");
+				newChoiceErrorName.innerHTML = "Name already exist, choose another.";
+				tempParent.appendChild(newChoiceErrorName);
+			}
+
 			return;
 		}
 		else{
 			alert("We good no choice already exist.");
+
+			var newChoiceErrorName = document.getElementById("newChoiceNameErrorMsg");
+
+			if(newChoiceErrorName != null){
+
+				var tempParent = newChoiceErrorName.parentNode;
+				parentNode.removeChild(newChoiceErrorName);
+			}
 		}
 
 		var webChoices = new WebsiteChoice(name);
@@ -202,6 +207,33 @@ function saveNewChoice(){
 		for(i=0; i<tempWindows.length; i++){
 			var tempWindow = new WebsiteWindow(i);
 			var tempTabs = tempWindows[i].getElementsByClassName("urlInput");
+			
+			//check if first URL tab is not empty, if so error message
+			if((tempTabs[0].value == '') || (tempTabs[0].value == tempTabs[0].defaultValue)){
+				alert("url error message");
+
+				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length == 0){
+					var newChoiceErrorURL = document.createElement("Label");
+					newChoiceErrorURL.setAttribute("for", tempTabs[0].id);
+					newChoiceErrorURL.setAttribute("class", "urlErrorMessage");
+					newChoiceErrorURL.innerHTML = "Please insert an URL.";
+				
+					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
+					var errorMsgDiv = document.getElementById("windowFirstURLErrorMsg" + windowNumber);
+					errorMsgDiv.appendChild(newChoiceErrorURL);				
+				}
+				return;
+			}
+			else{
+				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length != 0){
+					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
+					var errorMsgDiv = document.getElementById("windowFirstURLErrorMsg" + windowNumber);
+					
+					while(errorMsgDiv.firstChild){
+						errorMsgDiv.removeChild(errorMsgDiv.firstChild);
+					}
+				}
+			}
 			
 			for(j=0; j<tempTabs.length; j++){
 				//check first url is not empty, else insert message like above
