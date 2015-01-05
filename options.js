@@ -173,7 +173,7 @@ function saveNewChoice(){
 		//boolReturn = 1; //DELETE LINE AFTER ---------------------------
 		//if name already exists, insert error message and return
 		if(boolReturn){
-			alert("name already existed, not saving");
+			//alert("name already existed, not saving");
 
 			//check if error message already exists
 			if(document.getElementById("newChoiceNameErrorMsg") == null){
@@ -190,7 +190,7 @@ function saveNewChoice(){
 			return;
 		}
 		else{
-			alert("We good no choice already exist.");
+			//alert("We good no choice already exist.");
 
 			var newChoiceErrorName = document.getElementById("newChoiceNameErrorMsg");
 
@@ -210,7 +210,7 @@ function saveNewChoice(){
 			
 			//check if first URL tab is not empty, if so error message
 			if((tempTabs[0].value == '') || (tempTabs[0].value == tempTabs[0].defaultValue)){
-				alert("url error message");
+				//alert("url error message");
 
 				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length == 0){
 					var newChoiceErrorURL = document.createElement("Label");
