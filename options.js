@@ -68,6 +68,7 @@ function addAnotherWindowToNewChoice(){
 	//add div for new window
 	var tempDiv = document.createElement("DIV");
 	tempDiv.setAttribute("id", "window" + addNewChoiceWindowCount);
+	tempDiv.setAttribute("class", "window");
 	document.getElementById("addNewChoiceList").insertBefore(tempDiv, document.getElementById("addNewChoiceWindowButton"));
 	//add new window header
 	var tempHeader = document.createElement("H3");
@@ -202,7 +203,7 @@ function saveNewChoice(){
 		}
 
 		var webChoices = new WebsiteChoice(name);
-		var tempWindows = document.getElementById("addNewChoiceList").getElementsByTagName("DIV");
+		var tempWindows = document.getElementById("addNewChoiceList").getElementsByClassName("window");
 		
 		for(i=0; i<tempWindows.length; i++){
 			var tempWindow = new WebsiteWindow(i);
@@ -234,7 +235,7 @@ function saveNewChoice(){
 					}
 				}
 			}
-			
+		
 			for(j=0; j<tempTabs.length; j++){
 				//check first url is not empty, else insert message like above
 				if((tempTabs[j].value != '') || (tempTabs[j].value != tempTabs[j].defaultValue)){
@@ -243,11 +244,8 @@ function saveNewChoice(){
 					
 				}
 			}
-			
 			webChoices.windows.push(tempWindow);
-			
 		}
-
 		if(savedWebChoicesList == null){
 			savedWebChoicesList = [];
 		}
