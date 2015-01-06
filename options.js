@@ -166,12 +166,11 @@ function saveNewChoice(){
 			alert("existed: " + savedWebChoicesList);
 			for(i=0; i<savedWebChoicesList.length; i++){
 				if(savedWebChoicesList[i].name == name){
+					alert("name exists in saved data");
 					boolReturn = 1;
 				}
 			}
 		}
-		
-		//boolReturn = 1; //DELETE LINE AFTER ---------------------------
 		//if name already exists, insert error message and return
 		if(boolReturn){
 			alert("name already existed, not saving");
@@ -219,6 +218,7 @@ function saveNewChoice(){
 		var webChoices = new WebsiteChoice(name);
 		var tempWindows = document.getElementById("addNewChoiceList").getElementsByClassName("window");
 		
+		var urlReturn  = 0;
 		for(i=0; i<tempWindows.length; i++){
 			var tempWindow = new WebsiteWindow(i);
 			var tempTabs = tempWindows[i].getElementsByClassName("urlInput");
@@ -237,7 +237,7 @@ function saveNewChoice(){
 					var errorMsgDiv = document.getElementById("windowFirstURLErrorMsg" + windowNumber);
 					errorMsgDiv.appendChild(newChoiceErrorURL);				
 				}
-				return;
+				urlReturn = 1;
 			}
 			else{
 				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length != 0){
@@ -249,7 +249,7 @@ function saveNewChoice(){
 					}
 				}
 			}
-		
+
 			for(j=0; j<tempTabs.length; j++){
 				//check first url is not empty, else insert message like above
 				if((tempTabs[j].value != '') || (tempTabs[j].value != tempTabs[j].defaultValue)){
@@ -260,22 +260,60 @@ function saveNewChoice(){
 			}
 			webChoices.windows.push(tempWindow);
 		}
+		if(urlReturn){
+			return;
+		}	
+
 		if(savedWebChoicesList == null){
 			savedWebChoicesList = [];
 		}
 		savedWebChoicesList.push(JSON.stringify(webChoices))
 		alert("Save: " + JSON.stringify(savedWebChoicesList));
 
-		/*
+		//saving new choice
 		chrome.storage.sync.set({'webChoicesList': savedWebChoicesList}, function(){
 			message('Settings saved');
 		});
-		*/
+		
 		//NEED TO ADD A LISTENER TO THIS TO UPDATE MODIFY INFO
 
 		//need to clear all the input to empty
+		cleanAddNewChoice();
 	});	
 }
+
+function cleanAddNewChoice(){
+	//set global variables to initial
+	addNewChoiceWindowCount = 1;
+	addNewChoiceTabCount = 1;
+	//clear name
+	var name = document.getElementById("addChoiceName").value = '';
+	//clear windows
+	var tempWindows = document.getElementById("addNewChoiceList").getElementsByClassName("window");
+
+	var windowParent = tempWindows[0].parentNode;
+	var tabParent;
+	for(i=0; i<tempWindows.length; i++){
+		if(i == 0){//keep first window, just clean it up
+			var tempTabs = tempWindows[i].getElementsByTagName("DD");
+			tabParent = tempTabs[0].parentNode;
+			for(j=0; j<tempTabs.length; j++){
+				if(j == 0){//keep first tab, just clean it up
+					tempTabs[j].getElementsByClassName("urlInput")[0].value = '';
+				}
+				else{
+					tabParent.removeChild(tempTabs[j]);
+					j--;
+				}
+			}
+		}
+		else{
+			windowParent.removeChild(tempWindows[i]);
+			i--;
+		}
+	}
+}
+
 
 	/*
 	chrome.storage.sync.get(["webChoices"], function(items){
