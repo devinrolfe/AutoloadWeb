@@ -174,31 +174,45 @@ function saveNewChoice(){
 		//boolReturn = 1; //DELETE LINE AFTER ---------------------------
 		//if name already exists, insert error message and return
 		if(boolReturn){
-			//alert("name already existed, not saving");
+			alert("name already existed, not saving");
 
 			//check if error message already exists
-			if(document.getElementById("newChoiceNameErrorMsg") == null){
+			var tempNameErrorMsg = document.getElementById("newChoiceNameErrorMsg");
+
+			if(tempNameErrorMsg == null){
 				var tempLabel = document.getElementById("addChoiceName");
 				var tempParent = tempLabel.parentNode;
 				
 				var newChoiceErrorName = document.createElement("LABEL");
 				newChoiceErrorName.setAttribute("for", "addChoiceName");
 				newChoiceErrorName.setAttribute("id", "newChoiceNameErrorMsg");
-				newChoiceErrorName.innerHTML = "Name already exist, choose another.";
+				if(name == ''){
+					newChoiceErrorName.innerHTML = "Name cannot be empty.";
+				}
+				else{
+					newChoiceErrorName.innerHTML = "Name already exist, choose another.";
+				}
 				tempParent.appendChild(newChoiceErrorName);
+			}
+			else{//just change the error message if required.
+				if(tempNameErrorMsg.innerHTML == ''){
+					tempNameErrorMsg.innerHTML = "Name cannot be empty.";
+				}
+				else{
+					tempNameErrorMsg.innerHTML = "Name already exist, choose another.";
+				}
 			}
 
 			return;
 		}
 		else{
-			//alert("We good no choice already exist.");
+			alert("We good no choice already exist.");
 
 			var newChoiceErrorName = document.getElementById("newChoiceNameErrorMsg");
 
 			if(newChoiceErrorName != null){
-
 				var tempParent = newChoiceErrorName.parentNode;
-				parentNode.removeChild(newChoiceErrorName);
+				tempParent.removeChild(newChoiceErrorName);
 			}
 		}
 
@@ -258,6 +272,8 @@ function saveNewChoice(){
 		});
 		*/
 		//NEED TO ADD A LISTENER TO THIS TO UPDATE MODIFY INFO
+
+		//need to clear all the input to empty
 	});	
 }
 
