@@ -7,7 +7,8 @@ var addNewChoiceTabCount = 1;
 
 //Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
-  setupListeners();
+	//chrome.storage.sync.clear(); //use to clear storage
+	setupListeners();
 });
 
 
@@ -153,7 +154,6 @@ function saveNewChoice(){
 	//remove insert message if name does not exist
 	chrome.storage.sync.get(["webChoicesList"], function(items){
 
-		//asyncChecker = 0;
 		var boolReturn = 0;
 		if(name == ''){
 			boolReturn = 1;
@@ -162,18 +162,20 @@ function saveNewChoice(){
 			boolReturn = 0;
 		}
 		else{
-			savedWebChoicesList = JSON.parse(items.webChoicesList);
-			alert("existed: " + savedWebChoicesList);
+			//items.webChoicesList is parsed already when it is saved, so we should turn it back into an object.
+			savedWebChoicesList = items.webChoicesList
+			//alert("existed: " + savedWebChoicesList);
+
 			for(i=0; i<savedWebChoicesList.length; i++){
-				if(savedWebChoicesList[i].name == name){
-					alert("name exists in saved data");
+				if(JSON.parse(savedWebChoicesList[i]).name == name){
+					//alert("name exists in saved data");
 					boolReturn = 1;
 				}
 			}
 		}
 		//if name already exists, insert error message and return
 		if(boolReturn){
-			alert("name already existed, not saving");
+			//alert("name already existed, not saving");
 
 			//check if error message already exists
 			var tempNameErrorMsg = document.getElementById("newChoiceNameErrorMsg");
@@ -205,7 +207,7 @@ function saveNewChoice(){
 			return;
 		}
 		else{
-			alert("We good no choice already exist.");
+			//alert("We good no choice already exist.");
 
 			var newChoiceErrorName = document.getElementById("newChoiceNameErrorMsg");
 
@@ -268,11 +270,11 @@ function saveNewChoice(){
 			savedWebChoicesList = [];
 		}
 		savedWebChoicesList.push(JSON.stringify(webChoices))
-		alert("Save: " + JSON.stringify(savedWebChoicesList));
+		//alert("Save: " + JSON.stringify(savedWebChoicesList));
 
 		//saving new choice
 		chrome.storage.sync.set({'webChoicesList': savedWebChoicesList}, function(){
-			message('Settings saved');
+			//message('Settings saved');
 		});
 		
 		//NEED TO ADD A LISTENER TO THIS TO UPDATE MODIFY INFO
