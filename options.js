@@ -1,6 +1,8 @@
 //Global variables
 var addNewChoiceWindowCount = 1;
 var addNewChoiceTabCount = 1;
+var modifyChoiceCount = 1;
+
 
 //var asyncChecker = 0;
 //var boolReturn = 0;
@@ -9,6 +11,7 @@ var addNewChoiceTabCount = 1;
 document.addEventListener('DOMContentLoaded', function () {
 	//chrome.storage.sync.clear(); //use to clear storage
 	setupListeners();
+	loadExistingChoices();
 });
 
 
@@ -17,6 +20,24 @@ function setupListeners(){
 	document.getElementById("addNewChoiceWindowButton").addEventListener("click", addAnotherWindowToNewChoice);
 	document.getElementById("saveAddNewChoice").addEventListener("click", saveNewChoice);
 }
+
+/* BELOW ARE FUNCTIONS THAT DEAL WITH THE NEW CHOICES
+***********************************************************
+***********************************************************
+***********************************************************
+***********************************************************
+***********************************************************
+***********************************************************
+***********************************************************
+addAnotherURLToNewChoice()
+deleteURLNewChoice()
+addAnotherWindowToNewChoice()
+deleteWindowNewChoice()
+saveNewChoice()
+cleanAddNewChoice()
+*/
+
+
 /**
 Add a new tab for the window
 **/
@@ -173,7 +194,7 @@ function saveNewChoice(){
 				}
 			}
 		}
-		//if name already exists, insert error message and return
+		//if name already exists or name is empty, insert error message and return
 		if(boolReturn){
 			//alert("name already existed, not saving");
 
@@ -196,7 +217,7 @@ function saveNewChoice(){
 				tempParent.appendChild(newChoiceErrorName);
 			}
 			else{//just change the error message if required.
-				if(tempNameErrorMsg.innerHTML == ''){
+				if(name == ''){
 					tempNameErrorMsg.innerHTML = "Name cannot be empty.";
 				}
 				else{
@@ -270,7 +291,7 @@ function saveNewChoice(){
 			savedWebChoicesList = [];
 		}
 		savedWebChoicesList.push(JSON.stringify(webChoices))
-		//alert("Save: " + JSON.stringify(savedWebChoicesList));
+		alert("Save: " + JSON.stringify(savedWebChoicesList));
 
 		//saving new choice
 		chrome.storage.sync.set({'webChoicesList': savedWebChoicesList}, function(){
@@ -317,11 +338,100 @@ function cleanAddNewChoice(){
 }
 
 
-	/*
-	chrome.storage.sync.get(["webChoices"], function(items){
-		//  items = [ { "phasersTo": "awesome" } ]
-		alert(items.webChoices);
-		var temp = JSON.parse(items.webChoices);
-		alert(temp);
+/*
+chrome.storage.sync.get(["webChoices"], function(items){
+	//  items = [ { "phasersTo": "awesome" } ]
+	alert(items.webChoices);
+	var temp = JSON.parse(items.webChoices);
+	alert(temp);
+});
+*/
+
+/* BELOW ARE FUNCTIONS THAT DEAL WITH THE MODIFY CHOICES
+***********************************************************
+***********************************************************
+***********************************************************
+***********************************************************
+***********************************************************
+***********************************************************
+***********************************************************
+loadExistingChoices()
+*/
+function loadExistingChoices(){
+	//alert("loading existing choices, not implemented.");
+
+	var savedWebChoicesString = null;
+	var savedWebChoicesList = [];
+
+	chrome.storage.sync.get(["webChoicesList"], function(items){
+
+
+		if(items == null || items.webChoicesList == null){
+			return;
+		}
+		//items.webChoicesList is parsed already when it is saved, so we should turn it back into an object.
+		savedWebChoicesString = items.webChoicesList
+
+		var tempWebsiteChoice = null;
+		//put all the objects into a list
+		for(i=0; i<savedWebChoicesString.length; i++){
+			tempWebsiteChoice = JSON.parse(savedWebChoicesString[i]);
+			savedWebChoicesList.push(tempWebsiteChoice);
+
+			//add the WebsiteChoice object into the html
+			//1. name - can change name, but with error but back original name
+			//2. Windows - have delete window button
+			//3. tabs(urls) - have a delete url button
+			//4. save button
+			//5. delete button
+
+			var mainDiv = document.getElementById("modifySavedChoiceslist");
+			//adding basic divs
+			var tempChoiceDiv = document.createElement("DIV");
+			tempChoiceDiv.setAttribute("id", "webChoiceDiv" + (i+1));
+			mainDiv.appendChild(tempChoiceDiv);
+			//adding name div
+			var tempNameDiv = document.createElement("DIV");
+			tempNameDiv.setAttribute("id", "modifyChoiceNameInput" + (i+1));
+			tempChoiceDiv.appendChild(tempNameDiv);
+			//adding name
+			var tempNameLabel = document.createElement("INPUT");
+			tempNameLabel.setAttribute("id", "modifyChoiceName" + (i+1));
+			tempNameLabel.setAttribute("class", "textToInput");
+			tempNameLabel.setAttribute("type", "text");
+			tempNameLabel.setAttribute("size", "12");
+			tempNameLabel.setAttribute("value", tempWebsiteChoice.name);
+			tempNameDiv.appendChild(tempNameLabel);
+			//adding name div for checkmark/x
+			var tempValidDiv = document.createElement("DIV");
+			tempValidDiv.setAttribute("id", "modifyChoiceNameValid" + (i+1));
+			tempNameDiv.appendChild(tempValidDiv);
+
+			
+			// <div id="modifySavedChoiceslist">
+	          // <div id="addChoiceNameNameInput">
+	          //   <label for="addChoiceName">Name:</label>
+	          //   <input type="text" class="input" name="addChoiceName" value="" id="addChoiceName" size="12">
+	          // </div>
+			// <div id="addNewChoiceList">
+	  //           <div id="window1" class="window">
+	  //             <h3>Window 1</h3>
+	  //             <dl>
+	  //               <dd>
+	  //                 <label for="addChoiceURL1">URL(Required): </label>
+	  //                 <input type="text" class="urlInput" name="addChoiceURL1" value="" id="addChoiceURL1" size="30">
+	  //                 <input id="addNewChoiceURLButton1" type="button" value="(+) add URL"/>
+	  //                 <div id="windowFirstURLErrorMsg1"></div>
+	  //               </dd>
+	  //             </dl>
+	  //           </div>
+	  //           <input id="addNewChoiceWindowButton" type="button" value="(+) Add a new window"/>
+	  //           <br>
+	  //         	<input id="saveAddNewChoice" type="button" value="Save"/>
+   //          </div>
+
+   			//this value will be used when we
+   			modifyChoiceCount++;
+		}
 	});
-	*/
+}
