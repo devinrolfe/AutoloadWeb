@@ -133,7 +133,7 @@ function addAnotherWindowToNewChoice(){
 	tempDD.appendChild(tempButton);
 
 	var tempErrorDiv = document.createElement("DIV");
-	tempErrorDiv.setAttribute("id", "windowFirstURLErrorMsg" + addNewChoiceWindowCount);
+	tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + addNewChoiceWindowCount);
 	tempDD.appendChild(tempErrorDiv);
 }
 
@@ -257,7 +257,7 @@ function saveNewChoice(){
 					newChoiceErrorURL.innerHTML = "Please insert an URL.";
 				
 					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
-					var errorMsgDiv = document.getElementById("windowFirstURLErrorMsg" + windowNumber);
+					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + windowNumber);
 					errorMsgDiv.appendChild(newChoiceErrorURL);				
 				}
 				urlReturn = 1;
@@ -265,7 +265,7 @@ function saveNewChoice(){
 			else{
 				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length != 0){
 					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
-					var errorMsgDiv = document.getElementById("windowFirstURLErrorMsg" + windowNumber);
+					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + windowNumber);
 					
 					while(errorMsgDiv.firstChild){
 						errorMsgDiv.removeChild(errorMsgDiv.firstChild);
@@ -276,7 +276,7 @@ function saveNewChoice(){
 			for(j=0; j<tempTabs.length; j++){
 				//check first url is not empty, else insert message like above
 				if((tempTabs[j].value != '') || (tempTabs[j].value != tempTabs[j].defaultValue)){
-					var tempTab = new WebsiteTab(j, tempTabs[j].value);
+					var tempTab = new WebsiteTab(tempTabs[j].value);
 					tempWindow.tabs.push(tempTab);
 					
 				}
@@ -361,7 +361,7 @@ function loadExistingChoices(){
 	//alert("loading existing choices, not implemented.");
 
 	var savedWebChoicesString = null;
-	var savedWebChoicesList = [];
+	//var savedWebChoicesList = [];
 
 	chrome.storage.sync.get(["webChoicesList"], function(items){
 
@@ -376,7 +376,8 @@ function loadExistingChoices(){
 		//put all the objects into a list
 		for(i=0; i<savedWebChoicesString.length; i++){
 			tempWebsiteChoice = JSON.parse(savedWebChoicesString[i]);
-			savedWebChoicesList.push(tempWebsiteChoice);
+			//savedWebChoicesList.push(tempWebsiteChoice);
+			//alert(savedWebChoicesString[i]);
 
 			//add the WebsiteChoice object into the html
 			//1. name - can change name, but with error but back original name
@@ -386,9 +387,9 @@ function loadExistingChoices(){
 			//5. delete button
 
 			var mainDiv = document.getElementById("modifySavedChoiceslist");
-			//adding basic divs
+			//adding basic divs that will hold each choice
 			var tempChoiceDiv = document.createElement("DIV");
-			tempChoiceDiv.setAttribute("id", "webChoiceDiv" + (i+1));
+			tempChoiceDiv.setAttribute("id", "modifyWebChoiceDiv" + (i+1));
 			mainDiv.appendChild(tempChoiceDiv);
 			//adding name div
 			var tempNameDiv = document.createElement("DIV");
@@ -402,26 +403,52 @@ function loadExistingChoices(){
 			tempNameLabel.setAttribute("size", "12");
 			tempNameLabel.setAttribute("value", tempWebsiteChoice.name);
 			tempNameDiv.appendChild(tempNameLabel);
+			//hide the saved name for the choice so that we can correct it
+			var tempNameHiddenInput = document.createElement("INPUT");
+			tempNameHiddenInput.setAttribute("id", "modifyChoiceNameHiddenName" + (i+1));
+			tempNameHiddenInput.setAttribute("type", "hidden");
+			tempNameHiddenInput.setAttribute("value", tempWebsiteChoice.name);
+			tempNameDiv.appendChild(tempNameHiddenInput);
 			//adding name div for checkmark/x
 			var tempValidDiv = document.createElement("DIV");
 			tempValidDiv.setAttribute("id", "modifyChoiceNameValid" + (i+1));
 			tempNameDiv.appendChild(tempValidDiv);
 
+			var tempModifyChoiceListDiv = document.createElement("DIV");
+			tempModifyChoiceListDiv.setAttribute("id", "modifyChoiceList" + (i+1));
+			tempChoiceDiv.appendChild(tempModifyChoiceListDiv);
+			//adding the windows for the current WebsiteChoice object.
+			for(j=0; j<tempWebsiteChoice.windows.length;j++){
+				//tempModifyChoiceList is the main div to add to for this loop.
+				//create window div
+				var tempWindowDiv = document.createElement("DIV");
+				tempWindowDiv.setAttribute("id", "window" + (j+1));
+				tempWindowDiv.setAttribute("class", "window");
+				tempModifyChoiceListDiv.appendChild(tempWindowDiv);
+				//create header for window and append to window div.
+				var tempWindowHeader = document.createElement("H3");
+				tempWindowHeader.innerHTML = "Window " + (j+1);
+				tempWindowDiv.appendChild(tempWindowHeader);
+				//create dl element and append to window div.
+				var tempDl = document.createElement("DL");
+				tempWindowDiv.appendChild(tempDl);
+				//loop through each tab and append elements to dl
+
 			
-			// <div id="modifySavedChoiceslist">
-	          // <div id="addChoiceNameNameInput">
-	          //   <label for="addChoiceName">Name:</label>
-	          //   <input type="text" class="input" name="addChoiceName" value="" id="addChoiceName" size="12">
-	          // </div>
-			// <div id="addNewChoiceList">
-	  //           <div id="window1" class="window">
-	  //             <h3>Window 1</h3>
+			}
+			//Add the below creates to the tempChoiceDiv which is the main div for the
+			//current choice
+			//create add window button
+			//create a break
+			//create a save button
+			//create a delete button
+			
 	  //             <dl>
 	  //               <dd>
 	  //                 <label for="addChoiceURL1">URL(Required): </label>
 	  //                 <input type="text" class="urlInput" name="addChoiceURL1" value="" id="addChoiceURL1" size="30">
 	  //                 <input id="addNewChoiceURLButton1" type="button" value="(+) add URL"/>
-	  //                 <div id="windowFirstURLErrorMsg1"></div>
+	  //                 <div id="windowURLErrorMsg1"></div>
 	  //               </dd>
 	  //             </dl>
 	  //           </div>
