@@ -122,7 +122,7 @@ function addWindow(inputValue){
 	else{
 		var tempAdd = document.createElement("INPUT");
 		tempAdd.setAttribute("type", "button");
-		tempAdd.setAttribute("id", "addWindowButton" + windowIDNumber);
+		tempAdd.setAttribute("id", "addWindowButton" + choiceID);
 		tempAdd.setAttribute("value", "(+) Add a new window");
 		//NEED TO ADD LISTENER
 		tempAdd.addEventListener("click", addWindow);
