@@ -135,7 +135,7 @@ function addWindow(inputValue){
 	var urlInputList = document.getElementsByClassName("urlInput");
 	var tabIDNumber = getRandomNumber();
 	
-	tempDL.appendChild(createUrlSection(1, tabIDNumber, ""));
+	//tempDL.appendChild(createUrlSection(1, tabIDNumber, ""));
 	
 	return windowDiv;
 }
@@ -386,6 +386,13 @@ function loadExistingChoices(){
 				//create a new window, function will add the add window or delete window buttons
 				var currentWindow = addWindow(choiceID);
 				//need to fill in the first urlInput input, and then fill in the rest
+				//createUrlSection(firstUrl, tabIDNumber, value)
+				
+				for(var k=0; k<tempWebsiteChoice.windows[j].tabs.length; k++){
+					
+					
+					
+				}
 				
 			}
 		}
