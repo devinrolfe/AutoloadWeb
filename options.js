@@ -1,174 +1,157 @@
-//Global variables
-var addNewChoiceWindowCount = 1;
-var addNewChoiceTabCount = 1;
-var modifyChoiceCount = 1;
-
-
-//var asyncChecker = 0;
-//var boolReturn = 0;
 
 //Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
-	//chrome.storage.sync.clear(); //use to clear storage
+//	chrome.storage.sync.clear(); //use to clear storage
 	setupListeners();
 	loadExistingChoices();
 });
 
 
 function setupListeners(){
-	document.getElementById("addNewChoiceURLButton1").addEventListener("click", addAnotherURLToNewChoice);
-	document.getElementById("addNewChoiceWindowButton").addEventListener("click", addAnotherWindowToNewChoice);
-	document.getElementById("saveAddNewChoice").addEventListener("click", saveNewChoice);
+	document.getElementById("addUrlButton1").addEventListener("click", addUrl);
+	document.getElementById("addWindowButton1").addEventListener("click", addWindow);
+	document.getElementById("saveChoice1").addEventListener("click", saveChoice);
 }
-
-/* BELOW ARE FUNCTIONS THAT DEAL WITH THE NEW CHOICES
-***********************************************************
-***********************************************************
-***********************************************************
-***********************************************************
-***********************************************************
-***********************************************************
-***********************************************************
-addAnotherURLToNewChoice()
-deleteURLNewChoice()
-addAnotherWindowToNewChoice()
-deleteWindowNewChoice()
-saveNewChoice()
-cleanAddNewChoice()
-*/
-
-
+//1 000 000 000
+function getRandomNumber(){
+	return Math.floor(Math.random()*1000000000) + 2;
+}
 /**
 Add a new tab for the window
 **/
-function addAnotherURLToNewChoice(){
-	addNewChoiceTabCount += 1;
+function addUrl(inputValue){
+	var value = "";
+	if("string" == (typeof inputValue)){
+		value = inputValue;
+	}
+	
+	var tabIDNumber = getRandomNumber()
+	
+	var curWindow = this.parentNode.parentNode.parentNode;
+	curWindow.getElementsByTagName("DL")[0].appendChild(createUrlSection(0, tabIDNumber, value));
+}
 
-	var eventID = this.getAttribute("id");
-
-	var windowNumber;
-	windowNumber = eventID.slice(-1*addNewChoiceWindowCount.toString().length);
-
-	var curWindow = document.getElementById("window" + windowNumber);
-
-	var tempDd = document.createElement("DD");
-	curWindow.getElementsByTagName("DL")[0].appendChild(tempDd);
+function createUrlSection(firstUrl, tabIDNumber, value){
+	var tempDD = document.createElement("DD");
 	
 	var tempLabel = document.createElement("LABEL");
-	tempLabel.setAttribute("for", "addChoiceURL" + addNewChoiceTabCount);
+	tempLabel.setAttribute("for", "choiceURL" + tabIDNumber);
 	tempLabel.innerHTML = "URL(Optional): ";
+	tempDD.appendChild(tempLabel);
 
 	var tempAdd = document.createElement("INPUT");
 	tempAdd.setAttribute("type", "text");
 	tempAdd.setAttribute("class", "urlInput");
-	tempAdd.setAttribute("name", "addChoiceURL" + addNewChoiceTabCount);
-	tempAdd.setAttribute("value", "");
-	tempAdd.setAttribute("id", "addChoiceURL" + addNewChoiceTabCount);
+	tempAdd.setAttribute("name", "choiceURL");
+	tempAdd.setAttribute("value", value);
+	tempAdd.setAttribute("id", "choiceURL" + tabIDNumber);
 	tempAdd.setAttribute("size", "30");
+	tempDD.appendChild(tempAdd);
+	
+	var tempButton = document.createElement("INPUT");
+	tempButton.setAttribute("type", "button");
+	if(firstUrl){
+		tempButton.setAttribute("id", "addUrlButton" + tabIDNumber);
+		tempButton.setAttribute("value", "(+) add URL");
+		tempButton.addEventListener("click", addUrl);
+		tempDD.appendChild(tempButton);
 
-	var tempDelete = document.createElement("INPUT");
-	tempDelete.setAttribute("type", "button");
-	tempDelete.setAttribute("id", "deleteNewChoiceURLButton" + addNewChoiceTabCount);
-	tempDelete.setAttribute("value", "(-) Delete URL");
-	tempDelete.addEventListener("click", deleteURLNewChoice);
-
-	tempDd.appendChild(tempLabel);
-	tempDd.appendChild(tempAdd);
-	tempDd.appendChild(tempDelete);
+		var tempErrorDiv = document.createElement("DIV");
+		tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + tabIDNumber);
+		tempDD.appendChild(tempErrorDiv);
+	}else{
+		tempButton.setAttribute("id", "deleteUrlButton" + tabIDNumber);
+		tempButton.setAttribute("value", "(-) Delete URL");
+		tempButton.addEventListener("click", deleteUrl);
+		tempDD.appendChild(tempButton);
+	}
+	return tempDD;
 }
 
-function deleteURLNewChoice(){
-	//parentNode
+function deleteUrl(){
 	var tempDD = this.parentNode;
 	var tempDL = tempDD.parentNode;
 	tempDL.removeChild(tempDD);
 }
 
-function addAnotherWindowToNewChoice(){
-	addNewChoiceWindowCount += 1;
-	addNewChoiceTabCount += 1;
+function addWindow(inputValue){
+	var actionCall = 1;
+	var firstWindow = 0;
+	var choiceID = null;
+	if("number" == (typeof inputValue)){
+		choiceID = inputValue;
+		actionCall = 0;
+	}
+	
+	var windowIDNumber = getRandomNumber();
+	var tabIDNumber = getRandomNumber();
 	//add div for new window
-	var tempDiv = document.createElement("DIV");
-	tempDiv.setAttribute("id", "window" + addNewChoiceWindowCount);
-	tempDiv.setAttribute("class", "window");
-	document.getElementById("addNewChoiceList").insertBefore(tempDiv, document.getElementById("addNewChoiceWindowButton"));
-	//add new window header
-	var tempHeader = document.createElement("H3");
-	tempHeader.innerHTML = "Window " + addNewChoiceWindowCount;
-	tempDiv.appendChild(tempHeader);
-	//add delete window button
-	var tempDelete = document.createElement("INPUT");
-	tempDelete.setAttribute("type", "button");
-	tempDelete.setAttribute("id", "deleteNewChoiceWindowButton" + addNewChoiceWindowCount);
-	tempDelete.setAttribute("value", "(-) Delete Window");
-	tempDelete.addEventListener("click", deleteWindowNewChoice);
-
-	tempDiv.appendChild(tempDelete);
+	var windowDiv = document.createElement("DIV");
+	windowDiv.setAttribute("id", "window" + windowIDNumber);
+	windowDiv.setAttribute("class", "window");
 	
-	var tempDL = document.createElement("DL");
-	tempDiv.appendChild(tempDL);
-
-	var tempDD = document.createElement("DD");
-	tempDL.appendChild(tempDD);
-
-	var tempLabel = document.createElement("LABEL");
-	tempLabel.setAttribute("for", "addChoiceURL" + addNewChoiceTabCount);
-	tempLabel.innerHTML = "URL(Required): ";
-	tempDD.appendChild(tempLabel);
-
-	var tempInputURL = document.createElement("INPUT");
-	tempInputURL.setAttribute("type", "text");
-	tempInputURL.setAttribute("class", "urlInput");
-	tempInputURL.setAttribute("name", "addChoiceURL" + addNewChoiceTabCount);
-	tempInputURL.setAttribute("value", "");
-	tempInputURL.setAttribute("id", "addChoiceURL" + addNewChoiceTabCount);
-	tempInputURL.setAttribute("size", "30");
-	tempDD.appendChild(tempInputURL);
-	
-	var tempButton = document.createElement("INPUT");
-	tempButton.setAttribute("id", "addNewChoiceURLButton" + addNewChoiceWindowCount);
-	tempButton.setAttribute("type", "button");
-	tempButton.setAttribute("value", "(+) add URL");
-	tempButton.addEventListener("click", addAnotherURLToNewChoice);
-	tempDD.appendChild(tempButton);
-
-	var tempErrorDiv = document.createElement("DIV");
-	tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + addNewChoiceWindowCount);
-	tempDD.appendChild(tempErrorDiv);
-}
-
-function deleteWindowNewChoice(){
-	var windowNumber = parseInt(this.id.slice("deleteNewChoiceWindowButton".length));
-
-	var tempDiv = this.parentNode;
-	var parent = tempDiv.parentNode;
-
-	parent.removeChild(tempDiv);
-	addNewChoiceWindowCount -= 1;
-
-	var tempDivs = parent.getElementsByTagName("DIV");
-
-	for(i=0; i < tempDivs.length; i++){
+	if(actionCall){
+		this.parentNode.insertBefore(windowDiv, this);
+	}
+	else{
+		var choiceListDiv = document.getElementById("choiceList" + choiceID);
+		var windowList = choiceListDiv.getElementsByClassName("window");
 		
-		var idNumber = parseInt(tempDivs[i].id.slice("window".length));
-
-		if (idNumber > windowNumber){
-			//need to reduce sizes here
-			tempDivs[i].setAttribute("id", "window" + (idNumber - 1 ));
-			tempDivs[i].getElementsByTagName("H3")[0].innerHTML = "Window " + (idNumber - 1);
-			
-			var tempDeleteWindowButton = document.getElementById("deleteNewChoiceWindowButton" + idNumber);
-			tempDeleteWindowButton.setAttribute("id", "deleteNewChoiceWindowButton" + (idNumber - 1));
-
-			var tempAddURLButton = document.getElementById("addNewChoiceURLButton" + idNumber);
-			tempAddURLButton.setAttribute("id", "addNewChoiceURLButton" + (idNumber - 1));
+		if(windowList.length < 1){
+			firstWindow = 1;
+			choiceListDiv.appendChild(windowDiv);
+		}
+		else{
+			var addWindowButton = document.getElementById("addWindowButton" + choiceID);
+			choiceListDiv.insertBefore(windowDiv, addWindowButton);
 		}
 	}
+	//add new window header
+	var tempHeader = document.createElement("H3");
+	tempHeader.innerHTML = "Window";
+	windowDiv.appendChild(tempHeader);
+	//add delete window button
+	if(actionCall || !firstWindow){
+		var tempDelete = document.createElement("INPUT");
+		tempDelete.setAttribute("type", "button");
+		tempDelete.setAttribute("id", "deleteWindowButton" + windowIDNumber);
+		tempDelete.setAttribute("value", "(-) Delete Window");
+		tempDelete.addEventListener("click", deleteWindow);
+		windowDiv.appendChild(tempDelete);
+	}
+	else{
+		var tempAdd = document.createElement("INPUT");
+		tempAdd.setAttribute("type", "button");
+		tempAdd.setAttribute("id", "addWindowButton" + windowIDNumber);
+		tempAdd.setAttribute("value", "(+) Add a new window");
+		//NEED TO ADD LISTENER
+		tempAdd.addEventListener("click", addWindow);
+		
+		windowDiv.parentNode.appendChild(tempAdd);
+	}
+	var tempDL = document.createElement("DL");
+	windowDiv.appendChild(tempDL);
+
+	var urlInputList = document.getElementsByClassName("urlInput");
+	var tabIDNumber = getRandomNumber();
+	
+	tempDL.appendChild(createUrlSection(1, tabIDNumber, ""));
+	
+	return windowDiv;
 }
 
-function saveNewChoice(){
+function deleteWindow(){
+	var window = this.parentNode;
+	var parent = window.parentNode;
+	parent.removeChild(window);
+}
+
+function saveChoice(){
 	
-	var name = document.getElementById("addChoiceName").value;
+	var parent = this.parentNode;
+	var parentID = parseInt(parent.id.slice("choice".length));
+	var nameInput = parent.getElementsByClassName("name")[0];
+	var name = nameInput.value;
 
 	var savedWebChoicesList = null;
 	//need to check if name is not used yet, if it is return, and insert message already exist
@@ -187,7 +170,7 @@ function saveNewChoice(){
 			savedWebChoicesList = items.webChoicesList
 			//alert("existed: " + savedWebChoicesList);
 
-			for(i=0; i<savedWebChoicesList.length; i++){
+			for(var i=0; i<savedWebChoicesList.length; i++){
 				if(JSON.parse(savedWebChoicesList[i]).name == name){
 					//alert("name exists in saved data");
 					boolReturn = 1;
@@ -196,25 +179,22 @@ function saveNewChoice(){
 		}
 		//if name already exists or name is empty, insert error message and return
 		if(boolReturn){
-			//alert("name already existed, not saving");
-
+			//alert("name already existed or empty, not saving");
 			//check if error message already exists
-			var tempNameErrorMsg = document.getElementById("newChoiceNameErrorMsg");
+			var tempNameErrorMsg = document.getElementById("nameErotherrorMsg" + parentID);
 
 			if(tempNameErrorMsg == null){
-				var tempLabel = document.getElementById("addChoiceName");
-				var tempParent = tempLabel.parentNode;
-				
-				var newChoiceErrorName = document.createElement("LABEL");
-				newChoiceErrorName.setAttribute("for", "addChoiceName");
-				newChoiceErrorName.setAttribute("id", "newChoiceNameErrorMsg");
+				var errorNameMsg = document.createElement("LABEL");
+				errorNameMsg.setAttribute("for", nameInput.id);
+				errorNameMsg.setAttribute("id", "nameErrorMsg" + parentID);
 				if(name == ''){
-					newChoiceErrorName.innerHTML = "Name cannot be empty.";
+					errorNameMsg.innerHTML = "Name cannot be empty.";
 				}
 				else{
-					newChoiceErrorName.innerHTML = "Name already exist, choose another.";
+					errorNameMsg.innerHTML = "Name already exist, choose another.";
 				}
-				tempParent.appendChild(newChoiceErrorName);
+				var validNameDiv = document.getElementById("choiceNameValid" + parentID);
+				validNameDiv.appendChild(errorNameMsg);
 			}
 			else{//just change the error message if required.
 				if(name == ''){
@@ -224,22 +204,19 @@ function saveNewChoice(){
 					tempNameErrorMsg.innerHTML = "Name already exist, choose another.";
 				}
 			}
-
 			return;
 		}
 		else{
 			//alert("We good no choice already exist.");
-
-			var newChoiceErrorName = document.getElementById("newChoiceNameErrorMsg");
-
-			if(newChoiceErrorName != null){
-				var tempParent = newChoiceErrorName.parentNode;
-				tempParent.removeChild(newChoiceErrorName);
+			var errorNameMsg = document.getElementById("nameErrorMsg" + parentID);
+			if(errorNameMsg != null){
+				var errorNameMsgParent = errorNameMsg.parentNode;
+				errorNameMsgParent.removeChild(errorNameMsg);
 			}
 		}
 
 		var webChoices = new WebsiteChoice(name);
-		var tempWindows = document.getElementById("addNewChoiceList").getElementsByClassName("window");
+		var tempWindows = parent.getElementsByClassName("window");
 		
 		var urlReturn  = 0;
 		for(i=0; i<tempWindows.length; i++){
@@ -249,16 +226,15 @@ function saveNewChoice(){
 			//check if first URL tab is not empty, if so error message
 			if((tempTabs[0].value == '') || (tempTabs[0].value == tempTabs[0].defaultValue)){
 				//alert("url error message");
-
 				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length == 0){
-					var newChoiceErrorURL = document.createElement("Label");
-					newChoiceErrorURL.setAttribute("for", tempTabs[0].id);
-					newChoiceErrorURL.setAttribute("class", "urlErrorMessage");
-					newChoiceErrorURL.innerHTML = "Please insert an URL.";
+					var errorUrlMsg = document.createElement("Label");
+					errorUrlMsg.setAttribute("for", tempTabs[0].id);
+					errorUrlMsg.setAttribute("class", "urlErrorMessage");
+					errorUrlMsg.innerHTML = "Please insert an URL.";
 				
 					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
 					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + windowNumber);
-					errorMsgDiv.appendChild(newChoiceErrorURL);				
+					errorMsgDiv.appendChild(errorUrlMsg);				
 				}
 				urlReturn = 1;
 			}
@@ -267,14 +243,12 @@ function saveNewChoice(){
 					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
 					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + windowNumber);
 					
-					while(errorMsgDiv.firstChild){
-						errorMsgDiv.removeChild(errorMsgDiv.firstChild);
-					}
+					errorMsgDiv.removeChild(errorMsgDiv.firstChild);
 				}
 			}
-
-			for(j=0; j<tempTabs.length; j++){
-				//check first url is not empty, else insert message like above
+			
+			for(var j=0; j<tempTabs.length; j++){
+				//check first url is not empty
 				if((tempTabs[j].value != '') || (tempTabs[j].value != tempTabs[j].defaultValue)){
 					var tempTab = new WebsiteTab(tempTabs[j].value);
 					tempWindow.tabs.push(tempTab);
@@ -291,36 +265,50 @@ function saveNewChoice(){
 			savedWebChoicesList = [];
 		}
 		savedWebChoicesList.push(JSON.stringify(webChoices))
-		alert("Save: " + JSON.stringify(savedWebChoicesList));
+		//alert("Save: " + JSON.stringify(savedWebChoicesList));
 
 		//saving new choice
 		chrome.storage.sync.set({'webChoicesList': savedWebChoicesList}, function(){
 			//message('Settings saved');
 		});
 		
-		//NEED TO ADD A LISTENER TO THIS TO UPDATE MODIFY INFO
 
 		//need to clear all the input to empty
-		cleanAddNewChoice();
+		if(parentID == 1){
+			cleanAddNewChoice(parent, 1);
+		}
+		//Below will put a save message for the save and then have the save message disappear after 5 seconds
+		var saveChoiceStateDiv = document.getElementById("choiceStateMsg" + parentID);
+		var saveChoiceStateMsg = document.createElement("Label");
+		saveChoiceStateMsg.setAttribute("for", this.id);
+		saveChoiceStateMsg.setAttribute("class", "choiceStateMsg");
+		saveChoiceStateMsg.innerHTML = "Save was successful!";
+		saveChoiceStateDiv.appendChild(saveChoiceStateMsg);
+		
+		setTimeout(function(){
+			var saveChoiceStateDiv = document.getElementById("choiceStateMsg" + parentID);
+			var saveChoiceStateMsg = document.getElementsByClassName("choiceStateMsg")[0];
+			saveChoiceStateDiv.removeChild(saveChoiceStateMsg);
+		}, 5000, parentID);
+		
+		//1. NEED TO ADD A LISTENER TO THIS TO UPDATE MODIFY INFO
+		
 	});	
 }
 
-function cleanAddNewChoice(){
-	//set global variables to initial
-	addNewChoiceWindowCount = 1;
-	addNewChoiceTabCount = 1;
+function cleanAddNewChoice(choice , choiceID){
 	//clear name
-	var name = document.getElementById("addChoiceName").value = '';
+	var name = document.getElementById("choiceName" + choiceID).value = '';
 	//clear windows
-	var tempWindows = document.getElementById("addNewChoiceList").getElementsByClassName("window");
+	var tempWindows = choice.getElementsByClassName("window");
 
 	var windowParent = tempWindows[0].parentNode;
 	var tabParent;
-	for(i=0; i<tempWindows.length; i++){
+	for(var i=0; i<tempWindows.length; i++){
 		if(i == 0){//keep first window, just clean it up
 			var tempTabs = tempWindows[i].getElementsByTagName("DD");
 			tabParent = tempTabs[0].parentNode;
-			for(j=0; j<tempTabs.length; j++){
+			for(var j=0; j<tempTabs.length; j++){
 				if(j == 0){//keep first tab, just clean it up
 					tempTabs[j].getElementsByClassName("urlInput")[0].value = '';
 				}
@@ -337,34 +325,11 @@ function cleanAddNewChoice(){
 	}
 }
 
-
-/*
-chrome.storage.sync.get(["webChoices"], function(items){
-	//  items = [ { "phasersTo": "awesome" } ]
-	alert(items.webChoices);
-	var temp = JSON.parse(items.webChoices);
-	alert(temp);
-});
-*/
-
-/* BELOW ARE FUNCTIONS THAT DEAL WITH THE MODIFY CHOICES
-***********************************************************
-***********************************************************
-***********************************************************
-***********************************************************
-***********************************************************
-***********************************************************
-***********************************************************
-loadExistingChoices()
-*/
 function loadExistingChoices(){
-	//alert("loading existing choices, not implemented.");
-
 	var savedWebChoicesString = null;
 	//var savedWebChoicesList = [];
 
 	chrome.storage.sync.get(["webChoicesList"], function(items){
-
 
 		if(items == null || items.webChoicesList == null){
 			return;
@@ -379,148 +344,169 @@ function loadExistingChoices(){
 			//savedWebChoicesList.push(tempWebsiteChoice);
 			//alert(savedWebChoicesString[i]);
 
-			//add the WebsiteChoice object into the html
-			//1. name - can change name, but with error but back original name
-			//2. Windows - have delete window button
-			//3. tabs(urls) - have a delete url button
-			//4. save button
-			//5. delete button
-
-			var mainDiv = document.getElementById("modifySavedChoiceslist");
+			var mainDiv = document.getElementById("modifySavedChoices");
 			//adding basic divs that will hold each choice
-			var tempChoiceDiv = document.createElement("DIV");
-			tempChoiceDiv.setAttribute("id", "modifyWebChoiceDiv" + (i+1));
-			mainDiv.appendChild(tempChoiceDiv);
+			var choiceDiv = document.createElement("DIV");
+			choiceID = getRandomNumber();
+			choiceDiv.setAttribute("id", "choice" + choiceID);
+			mainDiv.appendChild(choiceDiv);
 			//adding name div
-			var tempNameDiv = document.createElement("DIV");
-			tempNameDiv.setAttribute("id", "modifyChoiceNameInput" + (i+1));
-			tempChoiceDiv.appendChild(tempNameDiv);
-			//adding name
-			var tempNameLabel = document.createElement("INPUT");
-			tempNameLabel.setAttribute("id", "modifyChoiceName" + (i+1));
-			tempNameLabel.setAttribute("class", "textToInput");
-			tempNameLabel.setAttribute("type", "text");
-			tempNameLabel.setAttribute("size", "12");
-			tempNameLabel.setAttribute("value", tempWebsiteChoice.name);
-			tempNameDiv.appendChild(tempNameLabel);
-			//hide the saved name for the choice so that we can correct it
-			var tempNameHiddenInput = document.createElement("INPUT");
-			tempNameHiddenInput.setAttribute("id", "modifyChoiceNameHiddenName" + (i+1));
-			tempNameHiddenInput.setAttribute("type", "hidden");
-			tempNameHiddenInput.setAttribute("value", tempWebsiteChoice.name);
-			tempNameDiv.appendChild(tempNameHiddenInput);
-			//adding name div for checkmark/x
-			var tempValidDiv = document.createElement("DIV");
-			tempValidDiv.setAttribute("id", "modifyChoiceNameValid" + (i+1));
-			tempNameDiv.appendChild(tempValidDiv);
+			var nameDiv = createNameSection(tempWebsiteChoice.name, choiceID);
+			choiceDiv.appendChild(nameDiv);
+			
+			//add the div that will contain the list of windows
+			var choiceListDiv = document.createElement("DIV");
+			choiceListDiv.setAttribute("id", "choiceList" + choiceID);
+			choiceDiv.appendChild(choiceListDiv);
+			//add the br
+			var br = document.createElement("BR");
+			choiceDiv.appendChild(br);
+			//add the save button for the choice
+			var saveChoiceButton = document.createElement("INPUT");
+			saveChoiceButton.setAttribute("id", "saveChoice" + choiceID);
+			saveChoiceButton.setAttribute("type", "button");
+			saveChoiceButton.setAttribute("value", "Save");
+			//need action listener!!!!!!!!!!
+			choiceDiv.appendChild(saveChoiceButton);
+	  	
+	  		var deleteChoiceButton = document.createElement("INPUT");
+	  		deleteChoiceButton.setAttribute("id", "deleteChoice" + choiceID);
+	  		deleteChoiceButton.setAttribute("type", "button");
+	  		deleteChoiceButton.setAttribute("value", "Delete");
+			//need action listener!!!!!!!!!!!!!!!!!!
+			choiceDiv.appendChild(deleteChoiceButton);
 
-			var tempModifyChoiceListDiv = document.createElement("DIV");
-			tempModifyChoiceListDiv.setAttribute("id", "modifyChoiceList" + (i+1));
-			tempChoiceDiv.appendChild(tempModifyChoiceListDiv);
+			var choiceStateDiv = document.createElement("DIV");
+			choiceStateDiv.setAttribute("id", "choiceStateMsg" + choiceID);
+			choiceDiv.appendChild(choiceStateDiv);
+			
 			//adding the windows for the current WebsiteChoice object.
 			for(j=0; j<tempWebsiteChoice.windows.length;j++){
-				//tempModifyChoiceList is the main div to add to for this loop.
-				//create window div
-				var tempWindowDiv = document.createElement("DIV");
-				tempWindowDiv.setAttribute("id", "window" + (j+1));
-				tempWindowDiv.setAttribute("class", "window");
-				tempModifyChoiceListDiv.appendChild(tempWindowDiv);
-				//create header for window and append to window div.
-				var tempWindowHeader = document.createElement("H3");
-				tempWindowHeader.innerHTML = "Window " + (j+1);
-				tempWindowDiv.appendChild(tempWindowHeader);
-
-				//if j != 0 then add the delete window button
-				if(j != 0){
-					var tempDelete = document.createElement("INPUT");
-					tempDelete.setAttribute("type", "button");
-					tempDelete.setAttribute("id", "deleteModifyChoiceWindowButton" + (j+1));
-					tempDelete.setAttribute("value", "(-) Delete Window");
-					//tempDelete.addEventListener("click", deleteWindowNewChoice);
-					tempWindowDiv.appendChild(tempDelete);
-				}
-
-				//create dl element and append to window div.
-				var tempDl = document.createElement("DL");
-				tempWindowDiv.appendChild(tempDl);
-				//loop through each tab and append elements to dl
-				for(k=0; k<tempWebsiteChoice.windows[j].tabs.length; k++){
-					var tempDd = document.createElement("DD");
-					tempDl.appendChild(tempDd);
-
-					var tempLabel = document.createElement("LABEL");
-					tempLabel.setAttribute("for", "addChoiceURL" + (k+1));
-					tempLabel.innerHTML = "URL(Required): ";
-					tempDd.appendChild(tempLabel);
-
-					var tempInputURL = document.createElement("INPUT");
-					tempInputURL.setAttribute("type", "text");
-					tempInputURL.setAttribute("class", "urlInput");
-					tempInputURL.setAttribute("name", "addChoiceURL" + (k+1));
-					tempInputURL.setAttribute("value", tempWebsiteChoice.windows[j].tabs[k].url);
-					tempInputURL.setAttribute("id", "addChoiceURL" + (k+1));
-					tempInputURL.setAttribute("size", "30");
-					tempDd.appendChild(tempInputURL);
-					
-					if(k == 0){
-						var tempButton = document.createElement("INPUT");
-						tempButton.setAttribute("id", "addModifyChoiceURLButton" + (j+1));
-						tempButton.setAttribute("type", "button");
-						tempButton.setAttribute("value", "(+) add URL");
-						//tempButton.addEventListener("click", addAnotherURLToNewChoice);
-						tempDd.appendChild(tempButton);
-
-						var tempErrorDiv = document.createElement("DIV");
-						tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + (j+1));
-						tempDd.appendChild(tempErrorDiv);
-					}
-					else{
-						var tempDelete = document.createElement("INPUT");
-						tempDelete.setAttribute("type", "button");
-						tempDelete.setAttribute("id", "deleteModifyChoiceURLButton" + addNewChoiceTabCount);
-						tempDelete.setAttribute("value", "(-) Delete URL");
-						//tempDelete.addEventListener("click", deleteURLNewChoice);
-						tempDd.appendChild(tempDelete);
-					}
-
-				}
+				
+				//create a new window, function will add the add window or delete window buttons
+				var currentWindow = addWindow(choiceID);
+				//need to fill in the first urlInput input, and then fill in the rest
+				
+				
+				
+				
+				
+				
+//				//tempModifyChoiceList is the main div to add to for this loop.
+//				//create window div
+//				var tempWindowDiv = document.createElement("DIV");
+//				tempWindowDiv.setAttribute("id", "window" + (j+1));
+//				tempWindowDiv.setAttribute("class", "window");
+//				tempModifyChoiceListDiv.appendChild(tempWindowDiv);
+//				//create header for window and append to window div.
+//				var tempWindowHeader = document.createElement("H3");
+//				tempWindowHeader.innerHTML = "Window " + (j+1);
+//				tempWindowDiv.appendChild(tempWindowHeader);
+//
+//				//if j != 0 then add the delete window button
+//				if(j != 0){
+//					var tempDelete = document.createElement("INPUT");
+//					tempDelete.setAttribute("type", "button");
+//					tempDelete.setAttribute("id", "deleteModifyChoiceWindowButton" + (j+1));
+//					tempDelete.setAttribute("value", "(-) Delete Window");
+//					//tempDelete.addEventListener("click", deleteWindowNewChoice);
+//					tempWindowDiv.appendChild(tempDelete);
+//				}
+//
+//				//create dl element and append to window div.
+//				var tempDl = document.createElement("DL");
+//				tempWindowDiv.appendChild(tempDl);
+//				//loop through each tab and append elements to dl
+//				for(var k=0; k<tempWebsiteChoice.windows[j].tabs.length; k++){
+//					
+//					
+//					
+//					var tempDd = document.createElement("DD");
+//					tempDl.appendChild(tempDd);
+//
+//					var tempLabel = document.createElement("LABEL");
+//					tempLabel.setAttribute("for", "addChoiceURL" + (k+1));
+//					tempLabel.innerHTML = "URL(Required): ";
+//					tempDd.appendChild(tempLabel);
+//
+//					var tempInputURL = document.createElement("INPUT");
+//					tempInputURL.setAttribute("type", "text");
+//					tempInputURL.setAttribute("class", "urlInput");
+//					tempInputURL.setAttribute("name", "addChoiceURL" + (k+1));
+//					tempInputURL.setAttribute("value", tempWebsiteChoice.windows[j].tabs[k].url);
+//					tempInputURL.setAttribute("id", "addChoiceURL" + (k+1));
+//					tempInputURL.setAttribute("size", "30");
+//					tempDd.appendChild(tempInputURL);
+//					
+//					if(k == 0){
+//						/*
+//						 * 
+//						 * 
+//						 * 
+//						 * 
+//						 * 
+//						 * 
+//						 * 
+//						 * 
+//						 */
+//						var tempButton = document.createElement("INPUT");
+//						tempButton.setAttribute("id", "addModifyChoiceURLButton" + (j+1));
+//						tempButton.setAttribute("type", "button");
+//						tempButton.setAttribute("value", "(+) add URL");
+//						tempButton.addEventListener("click", addUrlToChoice);
+//						tempDd.appendChild(tempButton);
+//
+//						var tempErrorDiv = document.createElement("DIV");
+//						tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + (j+1));
+//						tempDd.appendChild(tempErrorDiv);
+//					}
+//					else{
+//						var tempDelete = document.createElement("INPUT");
+//						tempDelete.setAttribute("type", "button");
+//						tempDelete.setAttribute("id", "deleteModifyChoiceURLButton" + addNewChoiceTabCount);
+//						tempDelete.setAttribute("value", "(-) Delete URL");
+//						//tempDelete.addEventListener("click", deleteURLNewChoice);
+//						tempDd.appendChild(tempDelete);
+//					}
+//
+//				}
+//			}
+//
+//   			//create an add window button.
+//   			var tempAddWindow = document.createElement("INPUT");
+//   			tempAddWindow.setAttribute("id", "addModifyChoiceWindowButton" + (i+1));
+//   			tempAddWindow.setAttribute("type", "button");
+//   			tempAddWindow.setAttribute("value", "(+) Add a new window");
+//   			//need action listener
+//   			tempModifyChoiceListDiv.appendChild(tempAddWindow);
+//				}
 			}
-
-
-
-   			//create a add window button.
-   			var tempAddWindow = document.createElement("INPUT");
-   			tempAddWindow.setAttribute("id", "addModifyChoiceWindowButton" + (i+1));
-   			tempAddWindow.setAttribute("type", "button");
-   			tempAddWindow.setAttribute("value", "(+) Add a new window");
-   			//need action listener
-   			tempModifyChoiceListDiv.appendChild(tempAddWindow);
-
-   			var tempBr = document.createElement("BR");
-   			tempChoiceDiv.appendChild(tempBr);
-   			
-   			var tempSaveChoiceButton = document.createElement("INPUT");
-   			tempSaveChoiceButton.setAttribute("id", "saveModifyChoice" + (i+1));
-   			tempSaveChoiceButton.setAttribute("type", "button");
-   			tempSaveChoiceButton.setAttribute("value", "Save");
-   			//need action listener
-   			tempChoiceDiv.appendChild(tempSaveChoiceButton);
-		  	
-		  	var tempDeleteChoiceButton = document.createElement("INPUT");
-   			tempDeleteChoiceButton.setAttribute("id", "DeleteModifyChoice" + (i+1));
-   			tempDeleteChoiceButton.setAttribute("type", "button");
-   			tempDeleteChoiceButton.setAttribute("value", "Delete");
-   			//need action listener
-   			tempChoiceDiv.appendChild(tempDeleteChoiceButton);
-
-   			var validChoiceErrorDiv = document.createElement("DIV");
-   			validChoiceErrorDiv.setAttribute("id", "modifyChoiceValid" + (i+1));
-			tempChoiceDiv.appendChild(validChoiceErrorDiv);
-			
-
-
-   			//this value will be used when we add stuff?
-   			modifyChoiceCount++;
 		}
 	});
+}
+
+function createNameSection(name, choiceID){
+	var nameDiv = document.createElement("DIV");
+	nameDiv.setAttribute("id", "choiceNameInput" + choiceID);
+	//adding name
+	var nameLabel = document.createElement("INPUT");
+	nameLabel.setAttribute("id", "choiceName" + choiceID);
+	nameLabel.setAttribute("class", "name");
+	nameLabel.setAttribute("name", "choiceName");
+	nameLabel.setAttribute("type", "text");
+	nameLabel.setAttribute("size", "12");
+	nameLabel.setAttribute("value", name);
+	nameDiv.appendChild(nameLabel);
+	//hide the saved name for the choice so that we can correct it
+	var nameHiddenInput = document.createElement("INPUT");
+	nameHiddenInput.setAttribute("id", "choiceNameHiddenName" + choiceID);
+	nameHiddenInput.setAttribute("type", "hidden");
+	nameHiddenInput.setAttribute("value", name);
+	nameDiv.appendChild(nameHiddenInput);
+	//adding name div for checkmark/x for valid name or error messages possibly
+	var validDiv = document.createElement("DIV");
+	validDiv.setAttribute("id", "choiceNameValid" + choiceID);
+	nameDiv.appendChild(validDiv);
+	
+	return nameDiv;
 }

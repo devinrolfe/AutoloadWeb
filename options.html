@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-      <title>Autoload Web Options</title>
+      <title>Auto-load Web Options</title>
       <style>
       </style>
       <script src="options.js"></script>
@@ -9,32 +9,32 @@
     </head>
     <body>
       <h1>Add New Choice</h1>
-      <div id="addNewChoice" class="hide">
-          <div id="addChoiceNameInput">
-            <label for="addChoiceName">Name:</label>
-            <input type="text" class="input" name="addChoiceName" value="" id="addChoiceName" size="12">
+      <div id="choice1" class="hide">
+          <div id="choiceNameInput1">
+            <label for="choiceName">Name:</label>
+            <input type="text" class="name" name="choiceName" value="" id="choiceName1" size="12">
+            <div id="choiceNameValid1"></div>
           </div>
-          <div id="addNewChoiceList">
+          <div id="choiceList1">
             <div id="window1" class="window">
-              <h3>Window 1</h3>
+              <h3>Window</h3>
               <dl>
                 <dd>
-                  <label for="addChoiceURL1">URL(Required): </label>
-                  <input type="text" class="urlInput" name="addChoiceURL1" value="" id="addChoiceURL1" size="30">
-                  <input id="addNewChoiceURLButton1" type="button" value="(+) add URL"/>
+                  <label for="choiceURL1">URL(Required): </label>
+                  <input type="text" class="urlInput" name="choiceURL" value="" id="choiceURL1" size="30">
+                  <input id="addUrlButton1" type="button" value="(+) add URL"/>
                   <div id="windowURLErrorMsg1"></div>
                 </dd>
               </dl>
             </div>
-            <input id="addNewChoiceWindowButton" type="button" value="(+) Add a new window"/>
+            <input id="addWindowButton1" type="button" value="(+) Add a new window"/>
           </div>
           <br>
-          <input id="saveAddNewChoice" type="button" value="Save"/>
+          <input id="saveChoice1" type="button" value="Save"/>
+          <div id="choiceStateMsg1"></div>
       </div>
       <h1>Modify Saved Choices</h1>
       <div id="modifySavedChoices" class="hide">
-        <div id="modifySavedChoiceslist">
-        </div>
       </div>
 
     </body>

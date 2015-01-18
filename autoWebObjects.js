@@ -5,11 +5,9 @@ function WebsiteChoice(name){
 }
 
 function WebsiteWindow(windowID){
-	//this.id = windowID;
 	this.tabs = [];
 }
 
-function WebsiteTab(tabID, url){
-	//this.id = tabID;
+function WebsiteTab(url){
 	this.url = url;
 }
