@@ -429,35 +429,97 @@ function loadExistingChoices(){
 				var tempWindowHeader = document.createElement("H3");
 				tempWindowHeader.innerHTML = "Window " + (j+1);
 				tempWindowDiv.appendChild(tempWindowHeader);
+
+				//if j != 0 then add the delete window button
+				if(j != 0){
+					var tempDelete = document.createElement("INPUT");
+					tempDelete.setAttribute("type", "button");
+					tempDelete.setAttribute("id", "deleteModifyChoiceWindowButton" + (j+1));
+					tempDelete.setAttribute("value", "(-) Delete Window");
+					//tempDelete.addEventListener("click", deleteWindowNewChoice);
+					tempWindowDiv.appendChild(tempDelete);
+				}
+
 				//create dl element and append to window div.
 				var tempDl = document.createElement("DL");
 				tempWindowDiv.appendChild(tempDl);
 				//loop through each tab and append elements to dl
+				for(k=0; k<tempWebsiteChoice.windows[j].tabs.length; k++){
+					var tempDd = document.createElement("DD");
+					tempDl.appendChild(tempDd);
 
-			
+					var tempLabel = document.createElement("LABEL");
+					tempLabel.setAttribute("for", "addChoiceURL" + (k+1));
+					tempLabel.innerHTML = "URL(Required): ";
+					tempDd.appendChild(tempLabel);
+
+					var tempInputURL = document.createElement("INPUT");
+					tempInputURL.setAttribute("type", "text");
+					tempInputURL.setAttribute("class", "urlInput");
+					tempInputURL.setAttribute("name", "addChoiceURL" + (k+1));
+					tempInputURL.setAttribute("value", tempWebsiteChoice.windows[j].tabs[k].url);
+					tempInputURL.setAttribute("id", "addChoiceURL" + (k+1));
+					tempInputURL.setAttribute("size", "30");
+					tempDd.appendChild(tempInputURL);
+					
+					if(k == 0){
+						var tempButton = document.createElement("INPUT");
+						tempButton.setAttribute("id", "addModifyChoiceURLButton" + (j+1));
+						tempButton.setAttribute("type", "button");
+						tempButton.setAttribute("value", "(+) add URL");
+						//tempButton.addEventListener("click", addAnotherURLToNewChoice);
+						tempDd.appendChild(tempButton);
+
+						var tempErrorDiv = document.createElement("DIV");
+						tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + (j+1));
+						tempDd.appendChild(tempErrorDiv);
+					}
+					else{
+						var tempDelete = document.createElement("INPUT");
+						tempDelete.setAttribute("type", "button");
+						tempDelete.setAttribute("id", "deleteModifyChoiceURLButton" + addNewChoiceTabCount);
+						tempDelete.setAttribute("value", "(-) Delete URL");
+						//tempDelete.addEventListener("click", deleteURLNewChoice);
+						tempDd.appendChild(tempDelete);
+					}
+
+				}
 			}
-			//Add the below creates to the tempChoiceDiv which is the main div for the
-			//current choice
-			//create add window button
-			//create a break
-			//create a save button
-			//create a delete button
-			
-	  //             <dl>
-	  //               <dd>
-	  //                 <label for="addChoiceURL1">URL(Required): </label>
-	  //                 <input type="text" class="urlInput" name="addChoiceURL1" value="" id="addChoiceURL1" size="30">
-	  //                 <input id="addNewChoiceURLButton1" type="button" value="(+) add URL"/>
-	  //                 <div id="windowURLErrorMsg1"></div>
-	  //               </dd>
-	  //             </dl>
-	  //           </div>
-	  //           <input id="addNewChoiceWindowButton" type="button" value="(+) Add a new window"/>
-	  //           <br>
-	  //         	<input id="saveAddNewChoice" type="button" value="Save"/>
-   //          </div>
 
-   			//this value will be used when we
+
+
+   			//create a add window button.
+   			var tempAddWindow = document.createElement("INPUT");
+   			tempAddWindow.setAttribute("id", "addModifyChoiceWindowButton" + (i+1));
+   			tempAddWindow.setAttribute("type", "button");
+   			tempAddWindow.setAttribute("value", "(+) Add a new window");
+   			//need action listener
+   			tempModifyChoiceListDiv.appendChild(tempAddWindow);
+
+   			var tempBr = document.createElement("BR");
+   			tempChoiceDiv.appendChild(tempBr);
+   			
+   			var tempSaveChoiceButton = document.createElement("INPUT");
+   			tempSaveChoiceButton.setAttribute("id", "saveModifyChoice" + (i+1));
+   			tempSaveChoiceButton.setAttribute("type", "button");
+   			tempSaveChoiceButton.setAttribute("value", "Save");
+   			//need action listener
+   			tempChoiceDiv.appendChild(tempSaveChoiceButton);
+		  	
+		  	var tempDeleteChoiceButton = document.createElement("INPUT");
+   			tempDeleteChoiceButton.setAttribute("id", "DeleteModifyChoice" + (i+1));
+   			tempDeleteChoiceButton.setAttribute("type", "button");
+   			tempDeleteChoiceButton.setAttribute("value", "Delete");
+   			//need action listener
+   			tempChoiceDiv.appendChild(tempDeleteChoiceButton);
+
+   			var validChoiceErrorDiv = document.createElement("DIV");
+   			validChoiceErrorDiv.setAttribute("id", "modifyChoiceValid" + (i+1));
+			tempChoiceDiv.appendChild(validChoiceErrorDiv);
+			
+
+
+   			//this value will be used when we add stuff?
    			modifyChoiceCount++;
 		}
 	});

@@ -1,3 +1,5 @@
+var optionTabOpen = 0;
+
 //Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
   autoloadWebObject.loadSavedChoices_();
