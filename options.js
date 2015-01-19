@@ -36,7 +36,12 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 	
 	var tempLabel = document.createElement("LABEL");
 	tempLabel.setAttribute("for", "choiceURL" + tabIDNumber);
-	tempLabel.innerHTML = "URL(Optional): ";
+	if(firstUrl){
+		tempLabel.innerHTML = "URL(Required): ";
+	}
+	else{
+		tempLabel.innerHTML = "URL(Optional): ";
+	}
 	tempDD.appendChild(tempLabel);
 
 	var tempAdd = document.createElement("INPUT");
@@ -135,8 +140,9 @@ function addWindow(inputValue){
 	var urlInputList = document.getElementsByClassName("urlInput");
 	var tabIDNumber = getRandomNumber();
 	
-	//tempDL.appendChild(createUrlSection(1, tabIDNumber, ""));
-	
+	if(actionCall){
+		tempDL.appendChild(createUrlSection(1, tabIDNumber, ""));
+	}
 	return windowDiv;
 }
 
@@ -146,7 +152,45 @@ function deleteWindow(){
 	parent.removeChild(window);
 }
 
+
+function deleteChoice(){
+	var choice = this.parentNode;
+	var parent = choice.parentNode;
+	var id = this.id.slice("deleteChoice".length);
+	var name = document.getElementById("choiceNameHiddenName" + id).value;
+	
+	parent.removeChild(choice);
+	
+	parent.remove
+	chrome.storage.sync.get(["webChoicesList"], function(items){
+		
+		var savedWebChoicesList = items.webChoicesList;
+		
+		for(var i=0; i<savedWebChoicesList.length; i++){
+			var storedName = JSON.parse(savedWebChoicesList[i]).name;
+			if(storedName == name){
+				savedWebChoicesList.splice(i, 1);
+				break;
+			}
+		}
+		//saving the new list of choices by deleting this one.
+		chrome.storage.sync.set({'webChoicesList': savedWebChoicesList}, function(){
+			//message('Settings saved');
+		});
+		
+	});
+}
+
 function saveChoice(){
+	/* check if this is an existing choice that has already been saved,
+	 * if so then different actions are taken to make sure it overwrites the previous
+	 * saved version of the choice.
+	 */
+	var isModifiedChoice = 0;
+	if(parseInt(this.id.slice("saveChoice".length)) > 1){
+		//alert("This is a modified choice");
+		isModifiedChoice = 1;
+	}
 	
 	var parent = this.parentNode;
 	var parentID = parseInt(parent.id.slice("choice".length));
@@ -171,9 +215,13 @@ function saveChoice(){
 			//alert("existed: " + savedWebChoicesList);
 
 			for(var i=0; i<savedWebChoicesList.length; i++){
-				if(JSON.parse(savedWebChoicesList[i]).name == name){
+				var storedName = JSON.parse(savedWebChoicesList[i]).name;
+				if(storedName == name){
 					//alert("name exists in saved data");
-					boolReturn = 1;
+					var hiddenName = document.getElementById("choiceNameHiddenName" + parentID);
+					if(!( (hiddenName != null) && (hiddenName.value == storedName) && (isModifiedChoice) )){
+						boolReturn = 1;
+					}
 				}
 			}
 		}
@@ -224,7 +272,7 @@ function saveChoice(){
 			var tempTabs = tempWindows[i].getElementsByClassName("urlInput");
 			
 			//check if first URL tab is not empty, if so error message
-			if((tempTabs[0].value == '') || (tempTabs[0].value == tempTabs[0].defaultValue)){
+			if(tempTabs[0].value == ''){
 				//alert("url error message");
 				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length == 0){
 					var errorUrlMsg = document.createElement("Label");
@@ -232,8 +280,9 @@ function saveChoice(){
 					errorUrlMsg.setAttribute("class", "urlErrorMessage");
 					errorUrlMsg.innerHTML = "Please insert an URL.";
 				
-					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
-					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + windowNumber);
+					//var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
+					var tabNumber = parseInt(tempTabs[0].id.slice("choiceURL".length));
+					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + tabNumber);
 					errorMsgDiv.appendChild(errorUrlMsg);				
 				}
 				urlReturn = 1;
@@ -249,7 +298,7 @@ function saveChoice(){
 			
 			for(var j=0; j<tempTabs.length; j++){
 				//check first url is not empty
-				if((tempTabs[j].value != '') || (tempTabs[j].value != tempTabs[j].defaultValue)){
+				if(tempTabs[j].value != ''){
 					var tempTab = new WebsiteTab(tempTabs[j].value);
 					tempWindow.tabs.push(tempTab);
 					
@@ -264,7 +313,20 @@ function saveChoice(){
 		if(savedWebChoicesList == null){
 			savedWebChoicesList = [];
 		}
-		savedWebChoicesList.push(JSON.stringify(webChoices))
+		
+		if(!isModifiedChoice){
+			savedWebChoicesList.push(JSON.stringify(webChoices))
+		}
+		else{//searches for previous save and replace it with the newer version
+			for(var i=0; i<savedWebChoicesList.length; i++){
+				var storedName = JSON.parse(savedWebChoicesList[i]).name;
+				var hiddenName = document.getElementById("choiceNameHiddenName" + parentID).value;
+				if(storedName == hiddenName){
+					savedWebChoicesList[i] = JSON.stringify(webChoices);
+				}
+			}
+		}
+		
 		//alert("Save: " + JSON.stringify(savedWebChoicesList));
 
 		//saving new choice
@@ -292,8 +354,66 @@ function saveChoice(){
 		}, 5000, parentID);
 		
 		//1. NEED TO ADD A LISTENER TO THIS TO UPDATE MODIFY INFO
-		
+		if(!isModifiedChoice){
+			updateModifyChoiceList(webChoices);
+		}
 	});	
+}
+
+function updateModifyChoiceList(webChoice){
+	var mainDiv = document.getElementById("modifySavedChoices");
+	//adding basic divs that will hold each choice
+	var choiceDiv = document.createElement("DIV");
+	var choiceID = getRandomNumber();
+	choiceDiv.setAttribute("id", "choice" + choiceID);
+	mainDiv.appendChild(choiceDiv);
+	//adding name div
+	var nameDiv = createNameSection(webChoice.name, choiceID);
+	choiceDiv.appendChild(nameDiv);
+	
+	//add the div that will contain the list of windows
+	var choiceListDiv = document.createElement("DIV");
+	choiceListDiv.setAttribute("id", "choiceList" + choiceID);
+	choiceDiv.appendChild(choiceListDiv);
+	//add the br
+	var br = document.createElement("BR");
+	choiceDiv.appendChild(br);
+	//add the save button for the choice
+	var saveChoiceButton = document.createElement("INPUT");
+	saveChoiceButton.setAttribute("id", "saveChoice" + choiceID);
+	saveChoiceButton.setAttribute("type", "button");
+	saveChoiceButton.setAttribute("value", "Save");
+	saveChoiceButton.addEventListener("click", saveChoice);
+	choiceDiv.appendChild(saveChoiceButton);
+	
+	var deleteChoiceButton = document.createElement("INPUT");
+	deleteChoiceButton.setAttribute("id", "deleteChoice" + choiceID);
+	deleteChoiceButton.setAttribute("type", "button");
+	deleteChoiceButton.setAttribute("value", "Delete");
+	deleteChoiceButton.addEventListener("click", deleteChoice);
+	choiceDiv.appendChild(deleteChoiceButton);
+	
+	var choiceStateDiv = document.createElement("DIV");
+	choiceStateDiv.setAttribute("id", "choiceStateMsg" + choiceID);
+	choiceDiv.appendChild(choiceStateDiv);
+	
+	//adding the windows for the current WebsiteChoice object.
+	for(var j=0; j<webChoice.windows.length;j++){
+		//create a new window, function will add the add window or delete window buttons
+		var currentWindow = addWindow(choiceID);
+		var currentDL = currentWindow.getElementsByTagName("DL")[0];
+		//create new url inputs for each in the window
+		for(var k=0; k<webChoice.windows[j].tabs.length; k++){
+			
+			var urlName = webChoice.windows[j].tabs[k].url;
+			if(k == 0){
+				currentDL.appendChild(createUrlSection(1, getRandomNumber(), urlName));
+			}
+			else{
+				currentDL.appendChild(createUrlSection(0, getRandomNumber(), urlName));
+			}
+		}
+	}
 }
 
 function cleanAddNewChoice(choice , choiceID){
@@ -341,60 +461,7 @@ function loadExistingChoices(){
 		//put all the objects into a list
 		for(i=0; i<savedWebChoicesString.length; i++){
 			tempWebsiteChoice = JSON.parse(savedWebChoicesString[i]);
-			//savedWebChoicesList.push(tempWebsiteChoice);
-			//alert(savedWebChoicesString[i]);
-
-			var mainDiv = document.getElementById("modifySavedChoices");
-			//adding basic divs that will hold each choice
-			var choiceDiv = document.createElement("DIV");
-			choiceID = getRandomNumber();
-			choiceDiv.setAttribute("id", "choice" + choiceID);
-			mainDiv.appendChild(choiceDiv);
-			//adding name div
-			var nameDiv = createNameSection(tempWebsiteChoice.name, choiceID);
-			choiceDiv.appendChild(nameDiv);
-			
-			//add the div that will contain the list of windows
-			var choiceListDiv = document.createElement("DIV");
-			choiceListDiv.setAttribute("id", "choiceList" + choiceID);
-			choiceDiv.appendChild(choiceListDiv);
-			//add the br
-			var br = document.createElement("BR");
-			choiceDiv.appendChild(br);
-			//add the save button for the choice
-			var saveChoiceButton = document.createElement("INPUT");
-			saveChoiceButton.setAttribute("id", "saveChoice" + choiceID);
-			saveChoiceButton.setAttribute("type", "button");
-			saveChoiceButton.setAttribute("value", "Save");
-			//need action listener!!!!!!!!!!
-			choiceDiv.appendChild(saveChoiceButton);
-	  	
-	  		var deleteChoiceButton = document.createElement("INPUT");
-	  		deleteChoiceButton.setAttribute("id", "deleteChoice" + choiceID);
-	  		deleteChoiceButton.setAttribute("type", "button");
-	  		deleteChoiceButton.setAttribute("value", "Delete");
-			//need action listener!!!!!!!!!!!!!!!!!!
-			choiceDiv.appendChild(deleteChoiceButton);
-
-			var choiceStateDiv = document.createElement("DIV");
-			choiceStateDiv.setAttribute("id", "choiceStateMsg" + choiceID);
-			choiceDiv.appendChild(choiceStateDiv);
-			
-			//adding the windows for the current WebsiteChoice object.
-			for(j=0; j<tempWebsiteChoice.windows.length;j++){
-				
-				//create a new window, function will add the add window or delete window buttons
-				var currentWindow = addWindow(choiceID);
-				//need to fill in the first urlInput input, and then fill in the rest
-				//createUrlSection(firstUrl, tabIDNumber, value)
-				
-				for(var k=0; k<tempWebsiteChoice.windows[j].tabs.length; k++){
-					
-					
-					
-				}
-				
-			}
+			updateModifyChoiceList(tempWebsiteChoice);
 		}
 	});
 }
