@@ -120,6 +120,10 @@ function loadSetup(){
 function loadWindow(window, focus){
 	chrome.windows.create(
 			//'url':window.tabs[0].url
+			//need to parse the first characters in url to see if match
+			//1. https://www
+			//2. http://www
+			//3. www
 			{'url':'http://www.google.com', 'focused':focus},
 			function(chromeWindow){
 				//window.tabs[j].url
@@ -132,7 +136,7 @@ function loadWindow(window, focus){
 					);
 				}
 				
-//				chrome.windows.update(chromeWindow.id, {state:'normal'});
+				chrome.windows.update(chromeWindow.id, {state:'maximized'});
 				
 			}
 	);
