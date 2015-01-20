@@ -101,7 +101,6 @@ function loadSetup(){
 		if(websiteChoice == null){
 			return;
 		}
-//		chrome.windows.create({"url":"http://www.facebook.com"}, function(){});
 		for(var i=0; i<websiteChoice.windows.length; i++){
 			
 			if(i == 0){
@@ -111,38 +110,50 @@ function loadSetup(){
 				loadWindow(websiteChoice.windows[i], false);
 			}
 		}
-		
 	});
 }
 
-
-
 function loadWindow(window, focus){
+	var tempUrl = checkUrl(window.tabs[0].url);
+	
 	chrome.windows.create(
-			//'url':window.tabs[0].url
-			//need to parse the first characters in url to see if match
-			//1. https://www
-			//2. http://www
-			//3. www
-			{'url':'http://www.google.com', 'focused':focus},
+			{'url':tempUrl, 'focused':focus},
 			function(chromeWindow){
-				//window.tabs[j].url
 				for(var i=1; i<window.tabs.length; i++){
+					tempUrl = checkUrl(window.tabs[i].url);
+					
 					chrome.tabs.create(
-							{'windowId':chromeWindow.id, 'url':'http://www.google.com'},
+							{'windowId':chromeWindow.id, 'url':tempUrl},
 							function(chromeTab){
-								
+								//nothing to do with the tab at the moment.
 							}
 					);
 				}
-				
 				chrome.windows.update(chromeWindow.id, {state:'maximized'});
-				
 			}
 	);
 }
 
-
+function checkUrl(tempUrl){
+	//need to parse the first characters in url to see if match
+	//1. https://www
+	//2. http://www
+	//3. www
+	var pattern1 = /https:\/\/www\./;
+	var pattern2 = /http:\/\/www\./;
+	var pattern3 = /www\./;
+	
+	if(pattern1.test(tempUrl) || pattern2.test(tempUrl)){
+		//done nothing to url since it is in good from
+	}
+	else if(pattern3.test(tempUrl)){
+		tempUrl = "http://" + tempUrl;
+	}
+	else{
+		tempUrl = "http://www." + tempUrl;
+	}
+	return tempUrl;
+}
 
 
 
