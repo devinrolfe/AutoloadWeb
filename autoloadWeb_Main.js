@@ -49,14 +49,12 @@ var autoloadWebObject = {
 			tempButton.addEventListener("click", loadSetup);
 			tempTR.appendChild(tempButton);
 		}
-		//create option buttons, should be 3 option buttons
+		//create option buttons, should be 2 option buttons
 		//1. save current set up
-		//2. add current website to...
-		//3. Options - create/modify choices
+		//3. Options - create/modify setups
 		var optionsRow = document.createElement("TR");
 		optionsRow.setAttribute("id", "optionRow");
 		table.appendChild(optionsRow);
-		//1 and 2 will not be buttons but instead text when clicked does stuff(css)
 		//1.
 		var option1 = document.createElement("TD");
 		var option1Button = document.createElement("INPUT");
@@ -67,19 +65,7 @@ var autoloadWebObject = {
 		option1Button.addEventListener("click", saveCurrentSetUp);
 		option1.appendChild(option1Button);
 		optionsRow.appendChild(option1);
-		//need listener to save all windows/tabs
 		//2.
-		var option2 = document.createElement("TD");
-		var option2Button = document.createElement("INPUT");
-		option2Button.setAttribute("type", "button");
-		option2Button.setAttribute("name", "option1");
-		option2Button.setAttribute("id", "option1");
-		option2Button.setAttribute("value", "add current site to...");
-		option2Button.addEventListener("click", addCurrentSiteTo);
-		option2.appendChild(option2Button);
-		optionsRow.appendChild(option2);
-		//need listener to save current site
-		//3.
 		var options = document.createElement("TD");
 		var optionsButton = document.createElement("INPUT");
 		optionsButton.setAttribute("type", "button");
@@ -88,21 +74,79 @@ var autoloadWebObject = {
 		optionsButton.setAttribute("value", "Options");
 		options.appendChild(optionsButton);
 		optionsRow.appendChild(options);
-		//create action listener for option2; will open a new window where
-		//the user can create their new choice.
 		optionsButton.addEventListener("click", optionsFunction);
 	}
 
 };
 function loadSetup(){
-	alert("not implemented!");
+
+	var name = this.value;
+	
+	chrome.storage.sync.get(["webChoicesList"], function(items){
+
+		if(items == null || items.webChoicesList == null){
+			return;
+		}
+		//items.webChoicesList is parsed already when it is saved, so we should turn it back into an object.
+		savedWebChoicesString = items.webChoicesList
+
+		var websiteChoice = null;;
+		//put all the objects into a list
+		for(var i=0; i<savedWebChoicesString.length; i++){
+			if(name == JSON.parse(savedWebChoicesString[i]).name){
+				websiteChoice = JSON.parse(savedWebChoicesString[i]);
+				break;
+			}
+		}
+		if(websiteChoice == null){
+			return;
+		}
+//		chrome.windows.create({"url":"http://www.facebook.com"}, function(){});
+		for(var i=0; i<websiteChoice.windows.length; i++){
+			
+			if(i == 0){
+				loadWindow(websiteChoice.windows[i], true);
+			}
+			else{
+				loadWindow(websiteChoice.windows[i], false);
+			}
+		}
+		
+	});
 }
+
+
+
+function loadWindow(window, focus){
+	chrome.windows.create(
+			//'url':window.tabs[0].url
+			{'url':'http://www.google.com', 'focused':focus},
+			function(chromeWindow){
+				//window.tabs[j].url
+				for(var i=1; i<window.tabs.length; i++){
+					chrome.tabs.create(
+							{'windowId':chromeWindow.id, 'url':'http://www.google.com'},
+							function(chromeTab){
+								
+							}
+					);
+				}
+				
+//				chrome.windows.update(chromeWindow.id, {state:'normal'});
+				
+			}
+	);
+}
+
+
+
+
+
+
 function saveCurrentSetUp(){
 	alert("not implemented!");
 }
-function addCurrentSiteTo(){
-	alert("not implemented!");
-}
+
 
 /*
  * makes it so that only one option tab is open at a time

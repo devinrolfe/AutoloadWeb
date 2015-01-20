@@ -14,8 +14,7 @@
 
   "permissions": [
     "tabs",
-    "storage",
-    "http://*.google.com/"
+    "storage"
   ],
   "browser_action": {
     "default_icon": "AutoLoadWebPic.png",
