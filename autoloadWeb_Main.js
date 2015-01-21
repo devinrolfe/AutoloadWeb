@@ -1,3 +1,5 @@
+var windowId = null;
+
 //Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
   autoloadWebObject.loadSavedChoices_();
@@ -110,6 +112,14 @@ function loadSetup(){
 				loadWindow(websiteChoice.windows[i], false);
 			}
 		}
+		//below is a little trick to make the main chrome window the focus
+		setTimeout(function(){
+			if(windowId != null){
+				chrome.windows.update(windowId, {'focused':true});
+			}
+			windowId = null;
+		}, 500);
+		
 	});
 }
 
@@ -117,13 +127,16 @@ function loadWindow(window, focus){
 	var tempUrl = checkUrl(window.tabs[0].url);
 	
 	chrome.windows.create(
-			{'url':tempUrl, 'focused':focus},
+			{'url':tempUrl, 'focused': focus},
 			function(chromeWindow){
+				
+				if(focus){windowId = chromeWindow.id;};
+				
 				for(var i=1; i<window.tabs.length; i++){
 					tempUrl = checkUrl(window.tabs[i].url);
 					
 					chrome.tabs.create(
-							{'windowId':chromeWindow.id, 'url':tempUrl},
+							{'windowId':chromeWindow.id, 'url':tempUrl, 'active':false, 'selected':false},
 							function(chromeTab){
 								//nothing to do with the tab at the moment.
 							}
@@ -132,6 +145,9 @@ function loadWindow(window, focus){
 				chrome.windows.update(chromeWindow.id, {state:'maximized'});
 			}
 	);
+	
+	
+	
 }
 
 function checkUrl(tempUrl){
