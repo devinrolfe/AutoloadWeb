@@ -3,14 +3,14 @@
 document.addEventListener('DOMContentLoaded', function () {
 //	chrome.storage.sync.clear(); //use to clear storage
 	setupListeners();
-	loadExistingChoices();
+	loadExistingSetups();
 });
 
 
 function setupListeners(){
 	document.getElementById("addUrlButton1").addEventListener("click", addUrl);
 	document.getElementById("addWindowButton1").addEventListener("click", addWindow);
-	document.getElementById("saveChoice1").addEventListener("click", saveChoice);
+	document.getElementById("saveSetup1").addEventListener("click", saveSetup);
 }
 //1 000 000 000
 function getRandomNumber(){
@@ -35,7 +35,7 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 	var tempDD = document.createElement("DD");
 	
 	var tempLabel = document.createElement("LABEL");
-	tempLabel.setAttribute("for", "choiceURL" + tabIDNumber);
+	tempLabel.setAttribute("for", "setupURL" + tabIDNumber);
 	if(firstUrl){
 		tempLabel.innerHTML = "URL(Required): ";
 	}
@@ -47,9 +47,9 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 	var tempAdd = document.createElement("INPUT");
 	tempAdd.setAttribute("type", "text");
 	tempAdd.setAttribute("class", "urlInput");
-	tempAdd.setAttribute("name", "choiceURL");
+	tempAdd.setAttribute("name", "setupURL");
 	tempAdd.setAttribute("value", value);
-	tempAdd.setAttribute("id", "choiceURL" + tabIDNumber);
+	tempAdd.setAttribute("id", "setupURL" + tabIDNumber);
 	tempAdd.setAttribute("size", "30");
 	tempDD.appendChild(tempAdd);
 	
@@ -82,9 +82,9 @@ function deleteUrl(){
 function addWindow(inputValue){
 	var actionCall = 1;
 	var firstWindow = 0;
-	var choiceID = null;
+	var setupID = null;
 	if("number" == (typeof inputValue)){
-		choiceID = inputValue;
+		setupID = inputValue;
 		actionCall = 0;
 	}
 	
@@ -99,16 +99,16 @@ function addWindow(inputValue){
 		this.parentNode.insertBefore(windowDiv, this);
 	}
 	else{
-		var choiceListDiv = document.getElementById("choiceList" + choiceID);
-		var windowList = choiceListDiv.getElementsByClassName("window");
+		var setupListDiv = document.getElementById("setupList" + setupID);
+		var windowList = setupListDiv.getElementsByClassName("window");
 		
 		if(windowList.length < 1){
 			firstWindow = 1;
-			choiceListDiv.appendChild(windowDiv);
+			setupListDiv.appendChild(windowDiv);
 		}
 		else{
-			var addWindowButton = document.getElementById("addWindowButton" + choiceID);
-			choiceListDiv.insertBefore(windowDiv, addWindowButton);
+			var addWindowButton = document.getElementById("addWindowButton" + setupID);
+			setupListDiv.insertBefore(windowDiv, addWindowButton);
 		}
 	}
 	//add new window header
@@ -127,7 +127,7 @@ function addWindow(inputValue){
 	else{
 		var tempAdd = document.createElement("INPUT");
 		tempAdd.setAttribute("type", "button");
-		tempAdd.setAttribute("id", "addWindowButton" + choiceID);
+		tempAdd.setAttribute("id", "addWindowButton" + setupID);
 		tempAdd.setAttribute("value", "(+) Add a new window");
 		//NEED TO ADD LISTENER
 		tempAdd.addEventListener("click", addWindow);
@@ -153,73 +153,73 @@ function deleteWindow(){
 }
 
 
-function deleteChoice(){
-	var choice = this.parentNode;
-	var parent = choice.parentNode;
-	var id = this.id.slice("deleteChoice".length);
-	var name = document.getElementById("choiceNameHiddenName" + id).value;
+function deleteSetup(){
+	var setup = this.parentNode;
+	var parent = setup.parentNode;
+	var id = this.id.slice("deleteSetup".length);
+	var name = document.getElementById("setupNameHiddenName" + id).value;
 	
-	parent.removeChild(choice);
+	parent.removeChild(setup);
 	
 	parent.remove
-	chrome.storage.sync.get(["webChoicesList"], function(items){
+	chrome.storage.sync.get(["webSetupsList"], function(items){
 		
-		var savedWebChoicesList = items.webChoicesList;
+		var savedWebSetupsList = items.webSetupsList;
 		
-		for(var i=0; i<savedWebChoicesList.length; i++){
-			var storedName = JSON.parse(savedWebChoicesList[i]).name;
+		for(var i=0; i<savedWebSetupsList.length; i++){
+			var storedName = JSON.parse(savedWebSetupsList[i]).name;
 			if(storedName == name){
-				savedWebChoicesList.splice(i, 1);
+				savedWebSetupsList.splice(i, 1);
 				break;
 			}
 		}
-		//saving the new list of choices by deleting this one.
-		chrome.storage.sync.set({'webChoicesList': savedWebChoicesList}, function(){
+		//saving the new list of setups by deleting this one.
+		chrome.storage.sync.set({'webSetupsList': savedWebSetupsList}, function(){
 			//message('Settings saved');
 		});
 		
 	});
 }
 
-function saveChoice(){
-	/* check if this is an existing choice that has already been saved,
+function saveSetup(){
+	/* check if this is an existing setup that has already been saved,
 	 * if so then different actions are taken to make sure it overwrites the previous
-	 * saved version of the choice.
+	 * saved version of the setup.
 	 */
-	var isModifiedChoice = 0;
-	if(parseInt(this.id.slice("saveChoice".length)) > 1){
-		//alert("This is a modified choice");
-		isModifiedChoice = 1;
+	var isModifiedSetup = 0;
+	if(parseInt(this.id.slice("saveSetup".length)) > 1){
+		//alert("This is a modified setup");
+		isModifiedSetup = 1;
 	}
 	
 	var parent = this.parentNode;
-	var parentID = parseInt(parent.id.slice("choice".length));
+	var parentID = parseInt(parent.id.slice("setup".length));
 	var nameInput = parent.getElementsByClassName("name")[0];
 	var name = nameInput.value;
 
-	var savedWebChoicesList = null;
+	var savedWebSetupsList = null;
 	//need to check if name is not used yet, if it is return, and insert message already exist
 	//remove insert message if name does not exist
-	chrome.storage.sync.get(["webChoicesList"], function(items){
+	chrome.storage.sync.get(["webSetupsList"], function(items){
 
 		var boolReturn = 0;
 		if(name == ''){
 			boolReturn = 1;
 		}
-		else if(items == null || items.webChoicesList == null){
+		else if(items == null || items.webSetupsList == null){
 			boolReturn = 0;
 		}
 		else{
-			//items.webChoicesList is parsed already when it is saved, so we should turn it back into an object.
-			savedWebChoicesList = items.webChoicesList
-			//alert("existed: " + savedWebChoicesList);
+			//items.webSetupsList is parsed already when it is saved, so we should turn it back into an object.
+			savedWebSetupsList = items.webSetupsList
+			//alert("existed: " + savedWebSetupsList);
 
-			for(var i=0; i<savedWebChoicesList.length; i++){
-				var storedName = JSON.parse(savedWebChoicesList[i]).name;
+			for(var i=0; i<savedWebSetupsList.length; i++){
+				var storedName = JSON.parse(savedWebSetupsList[i]).name;
 				if(storedName == name){
 					//alert("name exists in saved data");
-					var hiddenName = document.getElementById("choiceNameHiddenName" + parentID);
-					if(!( (hiddenName != null) && (hiddenName.value == storedName) && (isModifiedChoice) )){
+					var hiddenName = document.getElementById("setupNameHiddenName" + parentID);
+					if(!( (hiddenName != null) && (hiddenName.value == storedName) && (isModifiedSetup) )){
 						boolReturn = 1;
 					}
 				}
@@ -241,7 +241,7 @@ function saveChoice(){
 				else{
 					errorNameMsg.innerHTML = "Name already exist, choose another.";
 				}
-				var validNameDiv = document.getElementById("choiceNameValid" + parentID);
+				var validNameDiv = document.getElementById("setupNameValid" + parentID);
 				validNameDiv.appendChild(errorNameMsg);
 			}
 			else{//just change the error message if required.
@@ -255,7 +255,7 @@ function saveChoice(){
 			return;
 		}
 		else{
-			//alert("We good no choice already exist.");
+			//alert("We good no setup already exist.");
 			var errorNameMsg = document.getElementById("nameErrorMsg" + parentID);
 			if(errorNameMsg != null){
 				var errorNameMsgParent = errorNameMsg.parentNode;
@@ -263,7 +263,7 @@ function saveChoice(){
 			}
 		}
 
-		var webChoices = new WebsiteChoice(name);
+		var webSetups = new WebsiteSetup(name);
 		var tempWindows = parent.getElementsByClassName("window");
 		
 		var urlReturn  = 0;
@@ -281,7 +281,7 @@ function saveChoice(){
 					errorUrlMsg.innerHTML = "Please insert an URL.";
 				
 					//var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
-					var tabNumber = parseInt(tempTabs[0].id.slice("choiceURL".length));
+					var tabNumber = parseInt(tempTabs[0].id.slice("setupURL".length));
 					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + tabNumber);
 					errorMsgDiv.appendChild(errorUrlMsg);				
 				}
@@ -304,108 +304,108 @@ function saveChoice(){
 					
 				}
 			}
-			webChoices.windows.push(tempWindow);
+			webSetups.windows.push(tempWindow);
 		}
 		if(urlReturn){
 			return;
 		}	
 
-		if(savedWebChoicesList == null){
-			savedWebChoicesList = [];
+		if(savedWebSetupsList == null){
+			savedWebSetupsList = [];
 		}
 		
-		if(!isModifiedChoice){
-			savedWebChoicesList.push(JSON.stringify(webChoices))
+		if(!isModifiedSetup){
+			savedWebSetupsList.push(JSON.stringify(webSetups))
 		}
 		else{//searches for previous save and replace it with the newer version
-			for(var i=0; i<savedWebChoicesList.length; i++){
-				var storedName = JSON.parse(savedWebChoicesList[i]).name;
-				var hiddenName = document.getElementById("choiceNameHiddenName" + parentID).value;
+			for(var i=0; i<savedWebSetupsList.length; i++){
+				var storedName = JSON.parse(savedWebSetupsList[i]).name;
+				var hiddenName = document.getElementById("setupNameHiddenName" + parentID).value;
 				if(storedName == hiddenName){
-					savedWebChoicesList[i] = JSON.stringify(webChoices);
+					savedWebSetupsList[i] = JSON.stringify(webSetups);
 				}
 			}
 		}
 		
-		//alert("Save: " + JSON.stringify(savedWebChoicesList));
+		//alert("Save: " + JSON.stringify(savedWebSetupsList));
 
-		//saving new choice
-		chrome.storage.sync.set({'webChoicesList': savedWebChoicesList}, function(){
+		//saving new setup
+		chrome.storage.sync.set({'webSetupsList': savedWebSetupsList}, function(){
 			//message('Settings saved');
 		});
 		
 
 		//need to clear all the input to empty
 		if(parentID == 1){
-			cleanAddNewChoice(parent, 1);
+			cleanAddNewSetup(parent, 1);
 		}
 		//Below will put a save message for the save and then have the save message disappear after 5 seconds
-		var saveChoiceStateDiv = document.getElementById("choiceStateMsg" + parentID);
-		var saveChoiceStateMsg = document.createElement("Label");
-		saveChoiceStateMsg.setAttribute("for", this.id);
-		saveChoiceStateMsg.setAttribute("class", "choiceStateMsg");
-		saveChoiceStateMsg.innerHTML = "Save was successful!";
-		saveChoiceStateDiv.appendChild(saveChoiceStateMsg);
+		var saveSetupStateDiv = document.getElementById("setupStateMsg" + parentID);
+		var saveSetupStateMsg = document.createElement("Label");
+		saveSetupStateMsg.setAttribute("for", this.id);
+		saveSetupStateMsg.setAttribute("class", "setupStateMsg");
+		saveSetupStateMsg.innerHTML = "Save was successful!";
+		saveSetupStateDiv.appendChild(saveSetupStateMsg);
 		
 		setTimeout(function(){
-			var saveChoiceStateDiv = document.getElementById("choiceStateMsg" + parentID);
-			var saveChoiceStateMsg = document.getElementsByClassName("choiceStateMsg")[0];
-			saveChoiceStateDiv.removeChild(saveChoiceStateMsg);
+			var saveSetupStateDiv = document.getElementById("setupStateMsg" + parentID);
+			var saveSetupStateMsg = document.getElementsByClassName("setupStateMsg")[0];
+			saveSetupStateDiv.removeChild(saveSetupStateMsg);
 		}, 5000, parentID);
 		
 		//1. NEED TO ADD A LISTENER TO THIS TO UPDATE MODIFY INFO
-		if(!isModifiedChoice){
-			updateModifyChoiceList(webChoices);
+		if(!isModifiedSetup){
+			updateModifySetupList(webSetups);
 		}
 	});	
 }
 
-function updateModifyChoiceList(webChoice){
-	var mainDiv = document.getElementById("modifySavedChoices");
-	//adding basic divs that will hold each choice
-	var choiceDiv = document.createElement("DIV");
-	var choiceID = getRandomNumber();
-	choiceDiv.setAttribute("id", "choice" + choiceID);
-	mainDiv.appendChild(choiceDiv);
+function updateModifySetupList(webSetup){
+	var mainDiv = document.getElementById("modifySavedSetups");
+	//adding basic divs that will hold each setup
+	var setupDiv = document.createElement("DIV");
+	var setupID = getRandomNumber();
+	setupDiv.setAttribute("id", "setup" + setupID);
+	mainDiv.appendChild(setupDiv);
 	//adding name div
-	var nameDiv = createNameSection(webChoice.name, choiceID);
-	choiceDiv.appendChild(nameDiv);
+	var nameDiv = createNameSection(webSetup.name, setupID);
+	setupDiv.appendChild(nameDiv);
 	
 	//add the div that will contain the list of windows
-	var choiceListDiv = document.createElement("DIV");
-	choiceListDiv.setAttribute("id", "choiceList" + choiceID);
-	choiceDiv.appendChild(choiceListDiv);
+	var setupListDiv = document.createElement("DIV");
+	setupListDiv.setAttribute("id", "setupList" + setupID);
+	setupDiv.appendChild(setupListDiv);
 	//add the br
 	var br = document.createElement("BR");
-	choiceDiv.appendChild(br);
-	//add the save button for the choice
-	var saveChoiceButton = document.createElement("INPUT");
-	saveChoiceButton.setAttribute("id", "saveChoice" + choiceID);
-	saveChoiceButton.setAttribute("type", "button");
-	saveChoiceButton.setAttribute("value", "Save");
-	saveChoiceButton.addEventListener("click", saveChoice);
-	choiceDiv.appendChild(saveChoiceButton);
+	setupDiv.appendChild(br);
+	//add the save button for the setup
+	var saveSetupButton = document.createElement("INPUT");
+	saveSetupButton.setAttribute("id", "saveSetup" + setupID);
+	saveSetupButton.setAttribute("type", "button");
+	saveSetupButton.setAttribute("value", "Save");
+	saveSetupButton.addEventListener("click", saveSetup);
+	setupDiv.appendChild(saveSetupButton);
 	
-	var deleteChoiceButton = document.createElement("INPUT");
-	deleteChoiceButton.setAttribute("id", "deleteChoice" + choiceID);
-	deleteChoiceButton.setAttribute("type", "button");
-	deleteChoiceButton.setAttribute("value", "Delete");
-	deleteChoiceButton.addEventListener("click", deleteChoice);
-	choiceDiv.appendChild(deleteChoiceButton);
+	var deleteSetupButton = document.createElement("INPUT");
+	deleteSetupButton.setAttribute("id", "deleteSetup" + setupID);
+	deleteSetupButton.setAttribute("type", "button");
+	deleteSetupButton.setAttribute("value", "Delete");
+	deleteSetupButton.addEventListener("click", deleteSetup);
+	setupDiv.appendChild(deleteSetupButton);
 	
-	var choiceStateDiv = document.createElement("DIV");
-	choiceStateDiv.setAttribute("id", "choiceStateMsg" + choiceID);
-	choiceDiv.appendChild(choiceStateDiv);
+	var setupStateDiv = document.createElement("DIV");
+	setupStateDiv.setAttribute("id", "setupStateMsg" + setupID);
+	setupDiv.appendChild(setupStateDiv);
 	
-	//adding the windows for the current WebsiteChoice object.
-	for(var j=0; j<webChoice.windows.length;j++){
+	//adding the windows for the current WebsiteSetup object.
+	for(var j=0; j<webSetup.windows.length;j++){
 		//create a new window, function will add the add window or delete window buttons
-		var currentWindow = addWindow(choiceID);
+		var currentWindow = addWindow(setupID);
 		var currentDL = currentWindow.getElementsByTagName("DL")[0];
 		//create new url inputs for each in the window
-		for(var k=0; k<webChoice.windows[j].tabs.length; k++){
+		for(var k=0; k<webSetup.windows[j].tabs.length; k++){
 			
-			var urlName = webChoice.windows[j].tabs[k].url;
+			var urlName = webSetup.windows[j].tabs[k].url;
 			if(k == 0){
 				currentDL.appendChild(createUrlSection(1, getRandomNumber(), urlName));
 			}
@@ -416,11 +416,11 @@ function updateModifyChoiceList(webChoice){
 	}
 }
 
-function cleanAddNewChoice(choice , choiceID){
+function cleanAddNewSetup(setup , setupID){
 	//clear name
-	var name = document.getElementById("choiceName" + choiceID).value = '';
+	var name = document.getElementById("setupName" + setupID).value = '';
 	//clear windows
-	var tempWindows = choice.getElementsByClassName("window");
+	var tempWindows = setup.getElementsByClassName("window");
 
 	var windowParent = tempWindows[0].parentNode;
 	var tabParent;
@@ -445,48 +445,48 @@ function cleanAddNewChoice(choice , choiceID){
 	}
 }
 
-function loadExistingChoices(){
-	var savedWebChoicesString = null;
-	//var savedWebChoicesList = [];
+function loadExistingSetups(){
+	var savedWebSetupsString = null;
+	//var savedWebSetupsList = [];
 
-	chrome.storage.sync.get(["webChoicesList"], function(items){
+	chrome.storage.sync.get(["webSetupsList"], function(items){
 
-		if(items == null || items.webChoicesList == null){
+		if(items == null || items.webSetupsList == null){
 			return;
 		}
-		//items.webChoicesList is parsed already when it is saved, so we should turn it back into an object.
-		savedWebChoicesString = items.webChoicesList
+		//items.webSetupsList is parsed already when it is saved, so we should turn it back into an object.
+		savedWebSetupsString = items.webSetupsList
 
-		var tempWebsiteChoice = null;
+		var tempWebsiteSetup = null;
 		//put all the objects into a list
-		for(i=0; i<savedWebChoicesString.length; i++){
-			tempWebsiteChoice = JSON.parse(savedWebChoicesString[i]);
-			updateModifyChoiceList(tempWebsiteChoice);
+		for(i=0; i<savedWebSetupsString.length; i++){
+			tempWebsiteSetup = JSON.parse(savedWebSetupsString[i]);
+			updateModifySetupList(tempWebsiteSetup);
 		}
 	});
 }
 
-function createNameSection(name, choiceID){
+function createNameSection(name, setupID){
 	var nameDiv = document.createElement("DIV");
-	nameDiv.setAttribute("id", "choiceNameInput" + choiceID);
+	nameDiv.setAttribute("id", "setupNameInput" + setupID);
 	//adding name
 	var nameLabel = document.createElement("INPUT");
-	nameLabel.setAttribute("id", "choiceName" + choiceID);
+	nameLabel.setAttribute("id", "setupName" + setupID);
 	nameLabel.setAttribute("class", "name");
-	nameLabel.setAttribute("name", "choiceName");
+	nameLabel.setAttribute("name", "setupName");
 	nameLabel.setAttribute("type", "text");
 	nameLabel.setAttribute("size", "12");
 	nameLabel.setAttribute("value", name);
 	nameDiv.appendChild(nameLabel);
-	//hide the saved name for the choice so that we can correct it
+	//hide the saved name for the setup so that we can correct it
 	var nameHiddenInput = document.createElement("INPUT");
-	nameHiddenInput.setAttribute("id", "choiceNameHiddenName" + choiceID);
+	nameHiddenInput.setAttribute("id", "setupNameHiddenName" + setupID);
 	nameHiddenInput.setAttribute("type", "hidden");
 	nameHiddenInput.setAttribute("value", name);
 	nameDiv.appendChild(nameHiddenInput);
 	//adding name div for checkmark/x for valid name or error messages possibly
 	var validDiv = document.createElement("DIV");
-	validDiv.setAttribute("id", "choiceNameValid" + choiceID);
+	validDiv.setAttribute("id", "setupNameValid" + setupID);
 	nameDiv.appendChild(validDiv);
 	
 	return nameDiv;

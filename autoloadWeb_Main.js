@@ -175,7 +175,39 @@ function checkUrl(tempUrl){
 
 
 function saveCurrentSetUp(){
-	alert("not implemented!");
+	
+//	var w = 420;
+//    var h = 100;
+//    var left = (screen.width/2)-(w/2);
+//    var top = (screen.height/2)-(h/2); 
+//	
+//	chrome.windows.create(
+//		{'url': 'setupPrompt.html', 'type': 'popup', 'width': w, 'height': h, 'left': left, 'top': top}, 
+//		function(window) {
+//			
+//		});	
+	
+	chrome.windows.getAll({populate:true},
+		function(window_list){
+			var tab = array_of_Tabs[0];
+			if(tab != null){
+				chrome.windows.update(tab.id, {selected: true});
+				
+			}
+			else{
+				var w = 420;
+			    var h = 100;
+			    var left = (screen.width/2)-(w/2);
+			    var top = (screen.height/2)-(h/2); 
+				
+				chrome.windows.create(
+					{'url': 'setupPrompt.html', 'type': 'popup', 'width': w, 'height': h, 'left': left, 'top': top}, 
+					function(window) {
+						
+					});	
+			}
+	});
+		
 }
 
 

@@ -1,5 +1,5 @@
 /* OBJECTS */
-function WebsiteChoice(name){
+function WebsiteSetup(name){
 	this.name = name;
 	this.windows = [];
 }
