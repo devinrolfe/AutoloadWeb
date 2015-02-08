@@ -1,3 +1,7 @@
+var tabIdCount = 2;
+var windowIdCount = 2;
+var setupIdCount = 2;
+
 
 //Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
@@ -11,10 +15,15 @@ function setupListeners(){
 	document.getElementById("addUrlButton1").addEventListener("click", addUrl);
 	document.getElementById("addWindowButton1").addEventListener("click", addWindow);
 	document.getElementById("saveSetup1").addEventListener("click", saveSetup);
-}
-//1 000 000 000
-function getRandomNumber(){
-	return Math.floor(Math.random()*1000000000) + 2;
+	
+	
+	
+	chrome.runtime.onMessage.addListener(
+		  function(request) {
+		    if (request.greeting == "update")
+		    	updateModifySetupList(JSON.parse(request.payload));
+		  });
+	
 }
 /**
 Add a new tab for the window
@@ -25,7 +34,7 @@ function addUrl(inputValue){
 		value = inputValue;
 	}
 	
-	var tabIDNumber = getRandomNumber()
+	var tabIDNumber = tabIdCount++;
 	
 	var curWindow = this.parentNode.parentNode.parentNode;
 	curWindow.getElementsByTagName("DL")[0].appendChild(createUrlSection(0, tabIDNumber, value));
@@ -88,8 +97,8 @@ function addWindow(inputValue){
 		actionCall = 0;
 	}
 	
-	var windowIDNumber = getRandomNumber();
-	var tabIDNumber = getRandomNumber();
+	var windowIDNumber = windowIdCount++;
+	var tabIDNumber = tabIdCount++;
 	//add div for new window
 	var windowDiv = document.createElement("DIV");
 	windowDiv.setAttribute("id", "window" + windowIDNumber);
@@ -138,7 +147,7 @@ function addWindow(inputValue){
 	windowDiv.appendChild(tempDL);
 
 	var urlInputList = document.getElementsByClassName("urlInput");
-	var tabIDNumber = getRandomNumber();
+	var tabIDNumber = tabIdCount++;
 	
 	if(actionCall){
 		tempDL.appendChild(createUrlSection(1, tabIDNumber, ""));
@@ -229,7 +238,7 @@ function saveSetup(){
 		if(boolReturn){
 			//alert("name already existed or empty, not saving");
 			//check if error message already exists
-			var tempNameErrorMsg = document.getElementById("nameErotherrorMsg" + parentID);
+			var tempNameErrorMsg = document.getElementById("nameErrorMsg" + parentID);
 
 			if(tempNameErrorMsg == null){
 				var errorNameMsg = document.createElement("LABEL");
@@ -268,7 +277,7 @@ function saveSetup(){
 		
 		var urlReturn  = 0;
 		for(i=0; i<tempWindows.length; i++){
-			var tempWindow = new WebsiteWindow(i);
+			var tempWindow = new WebsiteWindow();
 			var tempTabs = tempWindows[i].getElementsByClassName("urlInput");
 			
 			//check if first URL tab is not empty, if so error message
@@ -364,8 +373,9 @@ function updateModifySetupList(webSetup){
 	var mainDiv = document.getElementById("modifySavedSetups");
 	//adding basic divs that will hold each setup
 	var setupDiv = document.createElement("DIV");
-	var setupID = getRandomNumber();
+	var setupID = setupIdCount++;
 	setupDiv.setAttribute("id", "setup" + setupID);
+	setupDiv.setAttribute("class", "setup");
 	mainDiv.appendChild(setupDiv);
 	//adding name div
 	var nameDiv = createNameSection(webSetup.name, setupID);
@@ -407,10 +417,10 @@ function updateModifySetupList(webSetup){
 			
 			var urlName = webSetup.windows[j].tabs[k].url;
 			if(k == 0){
-				currentDL.appendChild(createUrlSection(1, getRandomNumber(), urlName));
+				currentDL.appendChild(createUrlSection(1, tabIdCount++, urlName));
 			}
 			else{
-				currentDL.appendChild(createUrlSection(0, getRandomNumber(), urlName));
+				currentDL.appendChild(createUrlSection(0, tabIdCount++, urlName));
 			}
 		}
 	}

@@ -4,7 +4,7 @@ function WebsiteSetup(name){
 	this.windows = [];
 }
 
-function WebsiteWindow(windowID){
+function WebsiteWindow(){
 	this.tabs = [];
 }
 
