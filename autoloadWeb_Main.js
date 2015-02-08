@@ -20,7 +20,7 @@ var autoloadWebObject = {
 				return;
 			}
 			//items.webChoicesList is parsed already when it is saved, so we should turn it back into an object.
-			savedWebChoicesString = items.webChoicesList
+			var savedWebChoicesString = items.webChoicesList
 
 			var websiteChoice = [];
 			//put all the objects into a list
@@ -90,7 +90,7 @@ function loadSetup(){
 			return;
 		}
 		//items.webChoicesList is parsed already when it is saved, so we should turn it back into an object.
-		savedWebChoicesString = items.webChoicesList
+		var savedWebChoicesString = items.webChoicesList
 
 		var websiteChoice = null;;
 		//put all the objects into a list
