@@ -64,6 +64,8 @@ function saveNewSetup(){
 				var lastSavedSetup = JSON.parse(items.lastSavedWebSetup);
 				lastSavedSetup.name = name;
 				
+				if(savedWebSetupsList == null) savedWebSetupsList = [];
+				
 				savedWebSetupsList.push(JSON.stringify(lastSavedSetup));
 				
 				//save the new setup and check if options tab is open, if so then change it
@@ -73,6 +75,8 @@ function saveNewSetup(){
 						function(){
 							//message('Settings saved');
 							//this will open the options.html, but will first check if the tab is already open
+							//oonpekkcdidfjkfkmcokdlmanefiocle
+							//mifafbjbnhpmdjngkhnmfjdlefdgileh
 							chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"}, 
 									function(array_of_Tabs){
 										var tab = array_of_Tabs[0];
