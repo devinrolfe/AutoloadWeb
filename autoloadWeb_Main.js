@@ -180,7 +180,7 @@ function saveCurrentSetUp(){
 				//also add code to get window position and save it!!!!
 				
 				window.tabs.forEach(function(tab){
-					if(tab.url != "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"){
+					if(tab.url != "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"){
 						var webTab = new WebsiteTab(tab.url);
 						webWindow.tabs.push(webTab);
 					}
@@ -214,7 +214,7 @@ function optionsFunction(){
 	//window then it will be moved to the current window.
 	
 	//this will open the options.html, but will first check if the tab is already open
-	chrome.tabs.query({url: "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"}, 
+	chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"}, 
 			function(array_of_Tabs){
 				var tab = array_of_Tabs[0];
 				if(tab != null){

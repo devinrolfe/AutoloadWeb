@@ -73,7 +73,7 @@ function saveNewSetup(){
 						function(){
 							//message('Settings saved');
 							//this will open the options.html, but will first check if the tab is already open
-							chrome.tabs.query({url: "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"}, 
+							chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"}, 
 									function(array_of_Tabs){
 										var tab = array_of_Tabs[0];
 										if(tab != null){
