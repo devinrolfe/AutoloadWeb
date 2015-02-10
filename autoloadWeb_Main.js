@@ -117,7 +117,8 @@ function loadSetup(){
 }
 
 function loadWindow(window, focus){
-	var tempUrl = checkUrl(window.tabs[0].url);
+//	var tempUrl = checkUrl(window.tabs[0].url);
+	var tempUrl = window.tabs[0].url;
 	
 	chrome.windows.create(
 			{'url':tempUrl, 'focused': focus},
