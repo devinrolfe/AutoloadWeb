@@ -127,7 +127,8 @@ function loadWindow(window, focus){
 				if(focus){windowId = chromeWindow.id;};
 				
 				for(var i=1; i<window.tabs.length; i++){
-					tempUrl = checkUrl(window.tabs[i].url);
+//					tempUrl = checkUrl(window.tabs[i].url);
+					tempUrl = window.tabs[i].url;
 					
 					chrome.tabs.create(
 							{'windowId':chromeWindow.id, 'url':tempUrl, 'active':false, 'selected':false},
