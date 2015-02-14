@@ -119,9 +119,11 @@ function loadSetup(){
 function loadWindow(window, focus){
 //	var tempUrl = checkUrl(window.tabs[0].url);
 	var tempUrl = window.tabs[0].url;
+//	alert("Window info top:" + window.top + " left: " + window.left + " height: " + window.height +
+//			" width: " + window.width);
 	
 	chrome.windows.create(
-			{'url':tempUrl, 'focused': focus},
+			{'url':tempUrl, 'focused': focus, 'top': window.top, 'left': window.left, 'height': window.height, 'width': window.width},
 			function(chromeWindow){
 				
 				if(focus){windowId = chromeWindow.id;};
@@ -137,7 +139,9 @@ function loadWindow(window, focus){
 							}
 					);
 				}
-				chrome.windows.update(chromeWindow.id, {state:'maximized'});
+				if(window.isMaximized){
+					chrome.windows.update(chromeWindow.id, {state:'maximized'});
+				}
 			}
 	);
 	
@@ -177,12 +181,15 @@ function saveCurrentSetUp(){
 		var webSetup = new WebsiteSetup("setup not given a name.");
 			//collect all the windows and respective tabs.
 			windows.forEach(function(window){
-				
-				var webWindow = new WebsiteWindow();
-				//also add code to get window position and save it!!!!
-				
+				var webWindow;
+				if(window.state == "maximized"){
+					webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, true);
+				}
+				else{
+					webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, false);
+				}
 				window.tabs.forEach(function(tab){
-					if(tab.url != "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"){
+					if(tab.url != "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"){
 						var webTab = new WebsiteTab(tab.url);
 						webWindow.tabs.push(webTab);
 					}
@@ -216,7 +223,7 @@ function optionsFunction(){
 	//window then it will be moved to the current window.
 	
 	//this will open the options.html, but will first check if the tab is already open
-	chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"}, 
+	chrome.tabs.query({url: "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"}, 
 			function(array_of_Tabs){
 				var tab = array_of_Tabs[0];
 				if(tab != null){
