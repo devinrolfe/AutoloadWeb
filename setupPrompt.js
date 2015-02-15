@@ -14,6 +14,8 @@ function saveNewSetup(){
 		var name = document.getElementById("promptAnswer").value;
 		
 		var boolReturn = 0;
+		var overWrite = -1;
+		
 		if(name == ''){
 			boolReturn = 1;
 		}
@@ -27,7 +29,13 @@ function saveNewSetup(){
 			for(var i=0; i<savedWebSetupsList.length; i++){
 				var storedName = JSON.parse(savedWebSetupsList[i]).name;
 				if(storedName == name){
-					boolReturn = 1;
+					//Ask user if they want to overwrite over existing setup
+					if(confirm("Existing setup already existss with that name, do you wish to overwrite it?") == true){
+						overWrite = i;
+					}
+					else{
+						boolReturn = 1;
+					}
 				}
 			}
 		}
@@ -71,7 +79,12 @@ function saveNewSetup(){
 				
 				if(savedWebSetupsList == null) savedWebSetupsList = [];
 				
-				savedWebSetupsList.push(JSON.stringify(lastSavedSetup));
+				if(overWrite != -1){
+					savedWebSetupsList[overWrite] = JSON.stringify(lastSavedSetup);
+				}
+				else{
+					savedWebSetupsList.push(JSON.stringify(lastSavedSetup));
+				}
 				
 				//save the new setup and check if options tab is open, if so then change it
 				//to account for the new setup.
