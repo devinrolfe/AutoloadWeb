@@ -67,6 +67,7 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 	if(firstUrl){
 		tempButton.setAttribute("id", "addUrlButton" + tabIDNumber);
 		tempButton.setAttribute("value", "(+) add URL");
+		tempButton.setAttribute("class", "urlButton");
 		tempButton.addEventListener("click", addUrl);
 		tempDD.appendChild(tempButton);
 
@@ -76,6 +77,7 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 	}else{
 		tempButton.setAttribute("id", "deleteUrlButton" + tabIDNumber);
 		tempButton.setAttribute("value", "(-) Delete URL");
+		tempButton.setAttribute("class", "urlButton");
 		tempButton.addEventListener("click", deleteUrl);
 		tempDD.appendChild(tempButton);
 	}
@@ -273,6 +275,12 @@ function saveSetup(){
 		}
 
 		var webSetups = new WebsiteSetup(name);
+		
+		if(!document.getElementById("RemovePreviousWindows" + parentID).checked){
+			webSetups.removePrevWindows = false;
+		}
+		
+		
 		var tempWindows = parent.getElementsByClassName("window");
 		
 		var urlReturn  = 0;
@@ -379,7 +387,12 @@ function updateModifySetupList(webSetup){
 	mainDiv.appendChild(setupDiv);
 	//adding name div
 	var nameDiv = createNameSection(webSetup.name, setupID);
+	
 	setupDiv.appendChild(nameDiv);
+	
+	if(!webSetup.removePrevWindows){
+		document.getElementById("RemovePreviousWindows" + setupID).checked = false;
+	}
 	
 	//add the div that will contain the list of windows
 	var setupListDiv = document.createElement("DIV");
@@ -498,6 +511,20 @@ function createNameSection(name, setupID){
 	var validDiv = document.createElement("DIV");
 	validDiv.setAttribute("id", "setupNameValid" + setupID);
 	nameDiv.appendChild(validDiv);
+	
+	var checkBox =document.createElement("INPUT");
+	checkBox.setAttribute("id", "RemovePreviousWindows" + setupID);
+	checkBox.setAttribute("type", "checkbox");
+	checkBox.setAttribute("value", "RemovePreviousWindows");
+	checkBox.setAttribute("checked", true);
+	nameDiv.appendChild(checkBox);
+	
+	var labelForCheckBox =document.createElement("LABEL");
+	labelForCheckBox.setAttribute("id", "RemovePreviousWindowsLabel" + setupID);
+	labelForCheckBox.setAttribute("for", "RemovePreviousWindows");
+	labelForCheckBox.innerHTML = "Remove all current windows";
+	nameDiv.appendChild(labelForCheckBox);
+	
 	
 	return nameDiv;
 }

@@ -6,6 +6,14 @@
       	.setup {
       		margin: 20px;
       	}
+      	.urlInput {
+      		width: 500px;
+      		
+      	}
+      	.urlButton {
+      		margin: 2px;
+      		width: 110px;
+      	}
       </style>
       <script src="options.js"></script>
       <script src="autoWebObjects.js"></script>
@@ -17,15 +25,17 @@
             <label for="setupName">Name:</label>
             <input type="text" class="name" name="setupName" value="" id="setupName1" size="12">
             <div id="setupNameValid1"></div>
+            <input type="checkbox" id="RemovePreviousWindows1" value="RemovePreviousWindows" checked>
+  		    <label id="RemovePreviousWindowsLabel1" for="RemovePreviousWindows">Remove all current windows</label>
           </div>
           <div id="setupList1">
             <div id="window1" class="window">
               <h3>Window</h3>
               <dl>
                 <dd>
-                  <label for="setupURL1">URL(Required): </label>
-                  <input type="text" class="urlInput" name="setupURL" value="" id="setupURL1" size="30">
-                  <input id="addUrlButton1" type="button" value="(+) add URL"/>
+                  <label for="setupURL1">URL(Required):</label>
+                  <input type="text" class="urlInput" name="setupURL" value="" id="setupURL1" size="30"/>
+                  <input id="addUrlButton1" type="button" class="urlButton" value="(+) add URL"/>
                   <div id="windowURLErrorMsg1"></div>
                 </dd>
               </dl>

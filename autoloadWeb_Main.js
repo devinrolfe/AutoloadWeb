@@ -100,7 +100,7 @@ function loadSetup(){
 		//check if the remove all previous windows is set, if so remove all current windows.
 		if(websiteChoice.removePrevWindows){
 			chrome.windows.getAll({populate:true},
-					function(windows){
+					function(windows){	
 						
 					//collect all the windows and remove them.
 					windows.forEach(function(window){
@@ -132,9 +132,6 @@ function loadSetup(){
 function loadWindow(window, focus){
 //	var tempUrl = checkUrl(window.tabs[0].url);
 	var tempUrl = window.tabs[0].url;
-//	alert("Window info top:" + window.top + " left: " + window.left + " height: " + window.height +
-//			" width: " + window.width);
-	
 	chrome.windows.create(
 			{'url':tempUrl, 'focused': focus, 'top': window.top, 'left': window.left, 'height': window.height, 'width': window.width},
 			function(chromeWindow){
@@ -149,9 +146,12 @@ function loadWindow(window, focus){
 							{'windowId':chromeWindow.id, 'url':tempUrl, 'active':false, 'selected':false},
 							function(chromeTab){
 								//nothing to do with the tab at the moment.
+								
 							}
 					);
 				}
+//				alert(window.isMaximized);
+//				alert(chromeWindow.id);
 				if(window.isMaximized){
 					chrome.windows.update(chromeWindow.id, {state:'maximized'});
 				}
@@ -195,7 +195,9 @@ function saveCurrentSetUp(){
 			//collect all the windows and respective tabs.
 			windows.forEach(function(window){
 				var webWindow;
+//				alert(window.state);
 				if(window.state == "maximized"){
+//					alert(1);
 					webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, true);
 				}
 				else{

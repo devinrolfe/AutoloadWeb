@@ -9,6 +9,8 @@ function WebsiteWindow(){
 	this.tabs = [];
 	
 	this.positionUsed = false;
+	this.isMaximized = true;
+	
 	this.top = null;
 	this.left = null;
 	this.height = null;
