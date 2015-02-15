@@ -96,6 +96,19 @@ function loadSetup(){
 		if(websiteChoice == null){
 			return;
 		}
+		
+		//check if the remove all previous windows is set, if so remove all current windows.
+		if(websiteChoice.removePrevWindows){
+			chrome.windows.getAll({populate:true},
+					function(windows){
+						
+					//collect all the windows and remove them.
+					windows.forEach(function(window){
+						chrome.windows.remove(window.id);
+					});
+			});	
+		}
+		
 		for(var i=0; i<websiteChoice.windows.length; i++){
 			
 			if(i == 0){

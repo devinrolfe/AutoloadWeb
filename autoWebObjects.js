@@ -2,6 +2,7 @@
 function WebsiteSetup(name){
 	this.name = name;
 	this.windows = [];
+	this.removePrevWindows = true;
 }
 
 function WebsiteWindow(){

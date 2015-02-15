@@ -62,6 +62,11 @@ function saveNewSetup(){
 			//need to load the savedLastSetup
 			chrome.storage.sync.get(["lastSavedWebSetup"], function(items){
 				var lastSavedSetup = JSON.parse(items.lastSavedWebSetup);
+				//check to see if the remove all previous windows checkbox is checked
+				if(!document.getElementById("RemovePreviousWindows").checked){
+					lastSavedSetup.removePrevWindows = false;
+				}
+				
 				lastSavedSetup.name = name;
 				
 				if(savedWebSetupsList == null) savedWebSetupsList = [];
