@@ -146,12 +146,9 @@ function loadWindow(window, focus){
 							{'windowId':chromeWindow.id, 'url':tempUrl, 'active':false, 'selected':false},
 							function(chromeTab){
 								//nothing to do with the tab at the moment.
-								
 							}
 					);
 				}
-//				alert(window.isMaximized);
-//				alert(chromeWindow.id);
 				if(window.isMaximized){
 					chrome.windows.update(chromeWindow.id, {state:'maximized'});
 				}

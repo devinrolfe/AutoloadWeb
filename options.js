@@ -126,6 +126,38 @@ function addWindow(inputValue){
 	var tempHeader = document.createElement("H3");
 	tempHeader.innerHTML = "Window";
 	windowDiv.appendChild(tempHeader);
+	
+	//add hidden values for the window position
+	var windowMaximized = document.createElement("INPUT");
+	windowMaximized.setAttribute("id", "windowMaximized" + windowIDNumber);
+	windowMaximized.setAttribute("type", "hidden");
+	windowMaximized.setAttribute("value", true);
+	windowDiv.appendChild(windowMaximized);
+	
+	var windowTop = document.createElement("INPUT");
+	windowTop.setAttribute("id", "windowTop" + windowIDNumber);
+	windowTop.setAttribute("type", "hidden");
+	windowTop.setAttribute("value", 1);
+	windowDiv.appendChild(windowTop);
+	
+	var windowLeft = document.createElement("INPUT");
+	windowLeft.setAttribute("id", "windowLeft" + windowIDNumber);
+	windowLeft.setAttribute("type", "hidden");
+	windowLeft.setAttribute("value", 1);
+	windowDiv.appendChild(windowLeft);
+	
+	var windowHeight = document.createElement("INPUT");
+	windowHeight.setAttribute("id", "windowHeight" + windowIDNumber);
+	windowHeight.setAttribute("type", "hidden");
+	windowHeight.setAttribute("value", 1);
+	windowDiv.appendChild(windowHeight);
+	
+	var windowWidth = document.createElement("INPUT");
+	windowWidth.setAttribute("id", "windowWidth" + windowIDNumber);
+	windowWidth.setAttribute("type", "hidden");
+	windowWidth.setAttribute("value", 1);
+	windowDiv.appendChild(windowWidth);
+	
 	//add delete window button
 	if(actionCall || !firstWindow){
 		var tempDelete = document.createElement("INPUT");
@@ -285,7 +317,27 @@ function saveSetup(){
 		
 		var urlReturn  = 0;
 		for(i=0; i<tempWindows.length; i++){
-			var tempWindow = new WebsiteWindow();
+			var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
+			//NEED TO GET PREVIOUS WINDOW INFORMATION
+			/*
+			 * NEED HIDDEN VARIABLES HERE TO KEEP TRACK OF WINDOW DIMENSIONS
+			 */
+			//new WebsiteWindow(window.top, window.left, window.height, window.width, true);
+			var tempWindow = null;
+			if(!isModifiedSetup){
+				tempWindow = new WebsiteWindow(1, 1, 1, 1, true);
+			}
+			else{
+				//need to get window positions
+				tempWindow = new WebsiteWindow(
+						parseInt(document.getElementById("windowTop" + windowNumber).value),
+						parseInt(document.getElementById("windowLeft" + windowNumber).value),
+						parseInt(document.getElementById("windowHeight" + windowNumber).value),
+						parseInt(document.getElementById("windowWidth" + windowNumber).value),
+						document.getElementById("windowMaximized" + windowNumber).value == "true" ? true : false
+						);
+			}
+			
 			var tempTabs = tempWindows[i].getElementsByClassName("urlInput");
 			
 			//check if first URL tab is not empty, if so error message
@@ -306,7 +358,7 @@ function saveSetup(){
 			}
 			else{
 				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length != 0){
-					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
+//					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
 					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + windowNumber);
 					
 					errorMsgDiv.removeChild(errorMsgDiv.firstChild);
@@ -424,6 +476,18 @@ function updateModifySetupList(webSetup){
 	for(var j=0; j<webSetup.windows.length;j++){
 		//create a new window, function will add the add window or delete window buttons
 		var currentWindow = addWindow(setupID);
+		/*
+		 * FILL IN THE WINDOW POSITIONS
+		 */
+		//need to get window positions
+		document.getElementById("windowTop" + (windowIdCount-1)).value = webSetup.windows[j].top;
+		document.getElementById("windowLeft" + (windowIdCount-1)).value = webSetup.windows[j].left;
+		document.getElementById("windowHeight" + (windowIdCount-1)).value = webSetup.windows[j].height;
+		document.getElementById("windowWidth" + (windowIdCount-1)).value = webSetup.windows[j].width;
+		document.getElementById("windowMaximized" + (windowIdCount-1)).value = webSetup.windows[j].isMaximized;
+				
+		
+		
 		var currentDL = currentWindow.getElementsByTagName("DL")[0];
 		//create new url inputs for each in the window
 		for(var k=0; k<webSetup.windows[j].tabs.length; k++){
