@@ -2,6 +2,7 @@ var windowId = null;
 
 //Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
+	
   autoloadWebObject.loadSavedChoices_();
 //  chrome.storage.sync.clear();
 });
@@ -57,6 +58,7 @@ var autoloadWebObject = {
 		option1Button.setAttribute("name", "option1");
 		option1Button.setAttribute("id", "option1");
 		option1Button.setAttribute("value", "save current set up");
+		
 		option1Button.addEventListener("click", saveCurrentSetUp);
 		option1.appendChild(option1Button);
 		optionsRow.appendChild(option1);
@@ -201,7 +203,7 @@ function saveCurrentSetUp(){
 					webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, false);
 				}
 				window.tabs.forEach(function(tab){
-					if(tab.url != "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"){
+					if(tab.url != "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"){
 						var webTab = new WebsiteTab(tab.url);
 						webWindow.tabs.push(webTab);
 					}
@@ -235,7 +237,7 @@ function optionsFunction(){
 	//window then it will be moved to the current window.
 	
 	//this will open the options.html, but will first check if the tab is already open
-	chrome.tabs.query({url: "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"}, 
+	chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"}, 
 			function(array_of_Tabs){
 				var tab = array_of_Tabs[0];
 				if(tab != null){
