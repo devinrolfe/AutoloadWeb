@@ -1,6 +1,9 @@
+//oonpekkcdidfjkfkmcokdlmanefiocle LOCAL
+//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
+
 var windowId = null;
 
-//Run our extension script as soon as the document's DOM is ready.
+// Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
 	
   autoloadWebObject.loadSavedChoices_();
@@ -202,8 +205,10 @@ function saveCurrentSetUp(){
 				else{
 					webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, false);
 				}
+				//oonpekkcdidfjkfkmcokdlmanefiocle LOCAL
+				//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
 				window.tabs.forEach(function(tab){
-					if(tab.url != "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"){
+					if(tab.url != "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"){
 						var webTab = new WebsiteTab(tab.url);
 						webWindow.tabs.push(webTab);
 					}
@@ -237,7 +242,9 @@ function optionsFunction(){
 	//window then it will be moved to the current window.
 	
 	//this will open the options.html, but will first check if the tab is already open
-	chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"}, 
+	//oonpekkcdidfjkfkmcokdlmanefiocle LOCAL
+	//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
+	chrome.tabs.query({url: "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"},
 			function(array_of_Tabs){
 				var tab = array_of_Tabs[0];
 				if(tab != null){
