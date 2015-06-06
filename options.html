@@ -14,13 +14,28 @@
       		margin: 2px;
       		width: 110px;
       	}
+        .setup {
+            border: 1px solid black;
+        }
+        dd {
+            border: 5px solid darkred;
+            padding: 5px;
+
+            margin: -5px 0 0 -5px;
+        }
+
+        .window {
+            border: 5px solid darkgreen;
+        }
+
+
       </style>
       <script src="options.js"></script>
       <script src="autoWebObjects.js"></script>
     </head>
     <body>
       <h1>Add New Setup</h1>
-      <div id="setup1" class="hide">
+      <div id="setup1" class="hide setup">
           <div id="setupNameInput1">
             <label for="setupName">Name:</label>
             <input type="text" class="name" name="setupName" value="" id="setupName1" size="12">
