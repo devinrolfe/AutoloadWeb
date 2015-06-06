@@ -3,11 +3,14 @@
 
 var windowId = null;
 
+var removeAll = false;
+var prevWindows = null;
+
 // Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
 	
   autoloadWebObject.loadSavedChoices_();
-//  chrome.storage.sync.clear();
+  //chrome.storage.sync.clear();
 });
 
 var autoloadWebObject = {
@@ -88,9 +91,10 @@ function loadSetup(){
 			return;
 		}
 		//items.webSetupsList is parsed already when it is saved, so we should turn it back into an object.
-		var savedWebChoicesString = items.webSetupsList
+		var savedWebChoicesString = items.webSetupsList;
 
-		var websiteChoice = null;;
+
+		var websiteChoice = null;
 		//put all the objects into a list
 		for(var i=0; i<savedWebChoicesString.length; i++){
 			if(name == JSON.parse(savedWebChoicesString[i]).name){
@@ -101,21 +105,24 @@ function loadSetup(){
 		if(websiteChoice == null){
 			return;
 		}
-		
+
 		//check if the remove all previous windows is set, if so remove all current windows.
 		if(websiteChoice.removePrevWindows){
 			chrome.windows.getAll({populate:true},
-					function(windows){	
-						
-					//collect all the windows and remove them.
-					windows.forEach(function(window){
-						chrome.windows.remove(window.id);
-					});
-			});	
+				function(windows){
+					////collect all the windows and remove them.
+					//windows.forEach(function(window){
+					//	chrome.windows.remove(window.id);
+					//});
+					prevWindows = windows;
+					removeAll = true;
+				});
 		}
-		
+		else{
+			removeAll = false;
+		}
+
 		for(var i=0; i<websiteChoice.windows.length; i++){
-			
 			if(i == 0){
 				loadWindow(websiteChoice.windows[i], true);
 			}
@@ -123,6 +130,7 @@ function loadSetup(){
 				loadWindow(websiteChoice.windows[i], false);
 			}
 		}
+
 		//below is a little trick to make the main chrome window the focus
 		setTimeout(function(){
 			if(windowId != null){
@@ -130,12 +138,31 @@ function loadSetup(){
 			}
 			windowId = null;
 		}, 500);
-		
+
+		setTimeout(function(){
+			if(removeAll){
+				//collect all the windows and remove them.
+				prevWindows.forEach(function(window){
+					chrome.windows.remove(window.id);
+				});
+				prevWindows = null;
+			}else{
+				closeExtension();
+			}
+			removeAll = false;
+
+		}, 500);
+
+
+
 	});
 }
 
 function loadWindow(window, focus){
 //	var tempUrl = checkUrl(window.tabs[0].url);
+
+
+
 	var tempUrl = window.tabs[0].url;
 	chrome.windows.create(
 			{'url':tempUrl, 'focused': focus, 'top': window.top, 'left': window.left, 'height': window.height, 'width': window.width},
@@ -155,6 +182,7 @@ function loadWindow(window, focus){
 					);
 				}
 				if(window.isMaximized){
+
 					chrome.windows.update(chromeWindow.id, {state:'maximized'});
 				}
 			}
@@ -205,10 +233,10 @@ function saveCurrentSetUp(){
 				else{
 					webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, false);
 				}
-				//oonpekkcdidfjkfkmcokdlmanefiocle LOCAL
+				//ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
 				//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
 				window.tabs.forEach(function(tab){
-					if(tab.url != "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"){
+					if(tab.url != "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"){
 						var webTab = new WebsiteTab(tab.url);
 						webWindow.tabs.push(webTab);
 					}
@@ -221,7 +249,7 @@ function saveCurrentSetUp(){
 			});
 			
 			var w = 420;
-		    var h = 100;
+		    var h = 200;
 		    var left = (screen.width/2)-(w/2);
 		    var top = (screen.height/2)-(h/2); 
 			
@@ -240,11 +268,11 @@ function saveCurrentSetUp(){
 function optionsFunction(){
 	//NOTE: Only one option tab can be open at a time, so if one option tab is opened in another
 	//window then it will be moved to the current window.
-	
+
 	//this will open the options.html, but will first check if the tab is already open
-	//oonpekkcdidfjkfkmcokdlmanefiocle LOCAL
+	//ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
 	//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
-	chrome.tabs.query({url: "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"},
+	chrome.tabs.query({url: "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"},
 			function(array_of_Tabs){
 				var tab = array_of_Tabs[0];
 				if(tab != null){
@@ -263,3 +291,10 @@ function optionsFunction(){
 			});
 }
 
+/*
+ * Closes the chrome extension pop-up.
+ * This method is useful when a setup is chosen, but it does not close all previous windows.
+ */
+function closeExtension(){
+	self.close();
+}

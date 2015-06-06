@@ -30,7 +30,7 @@ function saveNewSetup(){
 				var storedName = JSON.parse(savedWebSetupsList[i]).name;
 				if(storedName == name){
 					//Ask user if they want to overwrite over existing setup
-					if(confirm("Existing setup already existss with that name, do you wish to overwrite it?") == true){
+					if(confirm("Existing setup name '" + name + "' already exists, do you wish to overwrite it?") == true){
 						overWrite = i;
 					}
 					else{
@@ -93,9 +93,9 @@ function saveNewSetup(){
 						function(){
 							//message('Settings saved');
 							//this will open the options.html, but will first check if the tab is already open
-							//oonpekkcdidfjkfkmcokdlmanefiocle
-							//mifafbjbnhpmdjngkhnmfjdlefdgileh
-							chrome.tabs.query({url: "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"},
+							//ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
+							//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
+							chrome.tabs.query({url: "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"},
 									function(array_of_Tabs){
 										var tab = array_of_Tabs[0];
 										if(tab != null){
