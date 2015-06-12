@@ -105,6 +105,13 @@ function addWindow(inputValue){
 	var windowDiv = document.createElement("DIV");
 	windowDiv.setAttribute("id", "window" + windowIDNumber);
 	windowDiv.setAttribute("class", "window");
+
+	/*
+	 * TODO:
+	 * draggable="true" ondragstart="drag(event)"
+	 */
+
+
 	
 	if(actionCall){
 		this.parentNode.insertBefore(windowDiv, this);
@@ -449,6 +456,13 @@ function updateModifySetupList(webSetup){
 	//add the div that will contain the list of windows
 	var setupListDiv = document.createElement("DIV");
 	setupListDiv.setAttribute("id", "setupList" + setupID);
+
+	/*
+	 * TODO: NEW
+	 * ondrop="drop(event)" ondragover="allowDrop(event)"
+	 */
+
+
 	setupDiv.appendChild(setupListDiv);
 	//add the br
 	var br = document.createElement("BR");
@@ -592,3 +606,4 @@ function createNameSection(name, setupID){
 	
 	return nameDiv;
 }
+
