@@ -15,22 +15,75 @@
       		width: 110px;
       	}
         .setup {
-            border: 1px solid black;
+            border-radius: 25px;
+            border: 2px solid #666666;
         }
+
+        .setup {
+            padding: 10px 10px 10px 20px;
+            width: 900px;
+        }
+
+
+        [draggable] {
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
+            /* Required to make elements draggable in old WebKit */
+            -khtml-user-drag: element;
+            -webkit-user-drag: element;
+        }
+
+
+
         dd {
-            border: 5px solid darkred;
-            background: #ff7f82;
-            padding: 5px;
+            height: 25px;
+            width: 750px;
+            border: 2px solid #666666;
+            background-color: #ccc;
+            margin-right: 5px;
+            -webkit-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 3px #000;
+            -ms-box-shadow: inset 0 0 3px #000;
+            box-shadow: inset 0 0 3px #000;
+            cursor: move;
+            margin-bottom: -4px;
 
-            margin: -5px 0 0 -5px;
         }
 
-        .window {
-            border: 5px solid darkgreen;
-            margin: -5px 0 0 -5px;
-            background: #91ff9e;
+        dd > * {
+            margin-top: 3px;
         }
 
+        dd > label {
+            margin-left: 5px;
+        }
+
+        dd > input[type="text"] {
+            text-align: center;
+            background-color: #E8E8E8;
+            border-radius: 25px;
+            border: 2px solid #666666;
+        }
+
+        dd > input[type="text"]:hover {
+            background-color: #FFFFFF;
+        }
+
+        dd > input[type="button"] {
+            background-color: #FFFFFF;
+            border-radius: 25px;
+            border: 2px solid #666666;
+        }
+
+        dd > input[type="button"]:hover {
+            color: blue;
+
+        }
 
       </style>
       <script src="options.js"></script>
@@ -39,18 +92,18 @@
     <body>
       <h1>Add New Setup</h1>
       <div id="setup1" class="hide setup">
-          <div id="setupNameInput1">
+          <div id="setupNameInput1">setupName
             <label for="setupName">Name:</label>
             <input type="text" class="name" name="setupName" value="" id="setupName1" size="12">
             <div id="setupNameValid1"></div>
             <input type="checkbox" id="RemovePreviousWindows1" value="RemovePreviousWindows" checked>
-  		    <label id="RemovePreviousWindowsLabel1" for="RemovePreviousWindows">Remove all current windows</label>
+  		    <label id="RemovePreviousWindowsLabel1" for="RemovePreviousWindows1">Remove all current windows</label>
           </div>
           <div id="setupList1">
             <div id="window1" class="window">
               <h3>Window</h3>
               <dl>
-                <dd>
+                <dd draggable="true">
                   <label for="setupURL1">URL(Required):</label>
                   <input type="text" class="urlInput" name="setupURL" value="" id="setupURL1" size="30"/>
                   <input id="addUrlButton1" type="button" class="urlButton" value="(+) add URL"/>

@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
 //	chrome.storage.sync.clear(); //use to clear storage
 	setupListeners();
 	loadExistingSetups();
+
+
+
 });
 
 
@@ -42,7 +45,9 @@ function addUrl(inputValue){
 
 function createUrlSection(firstUrl, tabIDNumber, value){
 	var tempDD = document.createElement("DD");
-	
+	tempDD.setAttribute("draggable", "true");
+
+
 	var tempLabel = document.createElement("LABEL");
 	tempLabel.setAttribute("for", "setupURL" + tabIDNumber);
 	if(firstUrl){
