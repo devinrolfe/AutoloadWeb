@@ -81,7 +81,7 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 
         var extraDeleteButton = document.createElement("INPUT");
         extraDeleteButton.setAttribute("type", "button");
-        extraDeleteButton.setAttribute("id", "deleteUrlButton" + tabIDNumber++);
+        extraDeleteButton.setAttribute("id", "deleteUrlButton" + tabIDNumber);
         extraDeleteButton.setAttribute("value", "(-) delete URL");
         extraDeleteButton.setAttribute("class", "urlButton");
         extraDeleteButton.addEventListener("click", deleteUrl);
@@ -95,7 +95,7 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 		tempButton.addEventListener("click", addUrl);
 		tempDD.appendChild(tempButton);
 
-		var tempErrorDiv = document.createElement("DIV");
+		var tempErrorDiv = document.createElement("SPAN");
 		tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + tabIDNumber);
 		tempDD.appendChild(tempErrorDiv);
 	}else{
@@ -111,7 +111,41 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 function deleteUrl(){
 	var tempDD = this.parentNode;
 	var tempDL = tempDD.parentNode;
-	tempDL.removeChild(tempDD);
+
+    //check if first URL, if so need to add some fixes
+    var buttons = tempDD.getElementsByTagName("INPUT");
+
+    if(buttons.length > 0) {
+        //get DD lists
+        var ddList = tempDL.getElementsByTagName("DD");
+
+        if(buttons[buttons.length - 1].value == "(+) add URL" && ddList.length < 2){
+            return;
+        }
+        //remove the url
+        tempDL.removeChild(tempDD);
+
+        fixFirstURL(ddList);
+
+    }
+}
+
+function fixFirstURL(ddList){
+
+    //    //make the delete URL button class change
+    //    var deleteButton = ddList[1].getElementsByTagName("INPUT");
+    //    if(deleteButton){
+    //        deleteButton.setAttribute("class", deleteButton.className + " onlyOne");
+    //    }
+    //}
+
+
+    if(ddList.length > 0){
+
+
+
+    }
+
 }
 
 function addWindow(inputValue){
