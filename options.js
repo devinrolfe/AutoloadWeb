@@ -1,4 +1,4 @@
-var tabIdCount = 2;
+var tabIdCount = 3;
 var windowIdCount = 2;
 var setupIdCount = 2;
 
@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function setupListeners(){
-	document.getElementById("addUrlButton1").addEventListener("click", addUrl);
+    document.getElementById("deleteUrlButton1").addEventListener("click", deleteUrl);
+	document.getElementById("addUrlButton2").addEventListener("click", addUrl);
 	document.getElementById("addWindowButton1").addEventListener("click", addWindow);
 	document.getElementById("saveSetup1").addEventListener("click", saveSetup);
 	
@@ -58,6 +59,13 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 	}
 	tempDD.appendChild(tempLabel);
 
+    //fix to get spacing correct
+    if(!firstUrl){
+        var spaceSpan = document.createElement("SPAN");
+        spaceSpan.setAttribute("class", "spaceSpan");
+        tempDD.appendChild(spaceSpan);
+    }
+
 	var tempAdd = document.createElement("INPUT");
 	tempAdd.setAttribute("type", "text");
 	tempAdd.setAttribute("class", "urlInput");
@@ -70,6 +78,17 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 	var tempButton = document.createElement("INPUT");
 	tempButton.setAttribute("type", "button");
 	if(firstUrl){
+
+        var extraDeleteButton = document.createElement("INPUT");
+        extraDeleteButton.setAttribute("type", "button");
+        extraDeleteButton.setAttribute("id", "deleteUrlButton" + tabIDNumber++);
+        extraDeleteButton.setAttribute("value", "(-) delete URL");
+        extraDeleteButton.setAttribute("class", "urlButton");
+        extraDeleteButton.addEventListener("click", deleteUrl);
+        tempDD.appendChild(extraDeleteButton);
+
+
+
 		tempButton.setAttribute("id", "addUrlButton" + tabIDNumber);
 		tempButton.setAttribute("value", "(+) add URL");
 		tempButton.setAttribute("class", "urlButton");
@@ -81,7 +100,7 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 		tempDD.appendChild(tempErrorDiv);
 	}else{
 		tempButton.setAttribute("id", "deleteUrlButton" + tabIDNumber);
-		tempButton.setAttribute("value", "(-) Delete URL");
+		tempButton.setAttribute("value", "(-) delete URL");
 		tempButton.setAttribute("class", "urlButton");
 		tempButton.addEventListener("click", deleteUrl);
 		tempDD.appendChild(tempButton);

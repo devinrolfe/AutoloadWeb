@@ -55,9 +55,13 @@
             background-color: silver;
         }
 
+        .spaceSpan {
+            margin-right: 3px;
+        }
+
         dd {
             height: 25px;
-            width: 750px;
+            width: 840px;
             border: 2px solid #666666;
             background-color: #ccc;
             margin-right: 5px;
@@ -148,7 +152,8 @@
                 <dd draggable="true">
                   <label for="setupURL1">URL(Required):</label>
                   <input type="text" class="urlInput" name="setupURL" value="" id="setupURL1" size="30"/>
-                  <input id="addUrlButton1" type="button" class="urlButton" value="(+) add URL"/>
+                  <input id="deleteUrlButton1" type="Button" class="urlButton" value="(-) delete URL"/>
+                  <input id="addUrlButton2" type="button" class="urlButton" value="(+) add URL"/>
                   <div id="windowURLErrorMsg1"></div>
                 </dd>
               </dl>
