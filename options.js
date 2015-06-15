@@ -46,7 +46,7 @@ function addUrl(inputValue){
 function createUrlSection(firstUrl, tabIDNumber, value){
 	var tempDD = document.createElement("DD");
 	tempDD.setAttribute("draggable", "true");
-
+    //TODO: for URL ELEMENTS
 
 	var tempLabel = document.createElement("LABEL");
 	tempLabel.setAttribute("for", "setupURL" + tabIDNumber);
@@ -115,7 +115,7 @@ function addWindow(inputValue){
 	 * TODO:
 	 * draggable="true" ondragstart="drag(event)"
 	 */
-
+    windowDiv.setAttribute("draggable", "true");
 
 	
 	if(actionCall){

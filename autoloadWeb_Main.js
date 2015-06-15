@@ -43,13 +43,18 @@ var autoloadWebObject = {
 			tempTR.setAttribute("id", "row" + i);
 			table.appendChild(tempTR);
 
+
+            var tdSetup = document.createElement("TD");
+            tdSetup.setAttribute("colspan", "2");
+            tempTR.appendChild(tdSetup);
+
 			var tempButton = document.createElement("INPUT");
 			tempButton.setAttribute("type", "button");
 			tempButton.setAttribute("name", "row" + i);
 			tempButton.setAttribute("id", "row" + i);
 			tempButton.setAttribute("value", websiteChoice[i]);
 			tempButton.addEventListener("click", loadSetup);
-			tempTR.appendChild(tempButton);
+			tdSetup.appendChild(tempButton);
 		}
 		//create option buttons, should be 2 option buttons
 		//1. save current set up
@@ -63,7 +68,7 @@ var autoloadWebObject = {
 		option1Button.setAttribute("type", "button");
 		option1Button.setAttribute("name", "option1");
 		option1Button.setAttribute("id", "option1");
-		option1Button.setAttribute("value", "save current set up");
+		option1Button.setAttribute("value", "save current setup");
 		
 		option1Button.addEventListener("click", saveCurrentSetUp);
 		option1.appendChild(option1Button);

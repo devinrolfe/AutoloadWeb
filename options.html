@@ -17,9 +17,6 @@
         .setup {
             border-radius: 25px;
             border: 2px solid #666666;
-        }
-
-        .setup {
             padding: 10px 10px 10px 20px;
             width: 900px;
             background-color: #F8F8F8;
@@ -36,7 +33,24 @@
             -webkit-user-drag: element;
         }
 
+        .window {
+            border: 2px solid #666666;
+            -webkit-border-radius: 10px;
+            -ms-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 3px #000;
+            -ms-box-shadow: inset 0 0 3px #000;
+            box-shadow: inset 0 0 3px #000;
+            cursor: move;
+            margin-bottom: -4px;
+            padding: 5px;
+        }
 
+        .window:hover {
+            border-color: black;
+            background-color: silver;
+        }
 
         dd {
             height: 25px;
@@ -55,6 +69,12 @@
             margin-bottom: -4px;
 
         }
+
+        dd:hover {
+            border-color: black;
+            background-color: #F8F8F8;
+        }
+
 
         dd > * {
             margin-top: 3px;
@@ -100,7 +120,9 @@
             background-color: #FFFFFF;
         }
 
-
+        label:hover {
+            color: blue;
+        }
 
       </style>
       <script src="options.js"></script>
@@ -117,7 +139,7 @@
   		    <label id="RemovePreviousWindowsLabel1" for="RemovePreviousWindows1">Remove all current windows</label>
           </div>
           <div id="setupList1">
-            <div id="window1" class="window">
+            <div id="window1" class="window" draggable="true">
               <h3>Window</h3>
               <dl>
                 <dd draggable="true">
