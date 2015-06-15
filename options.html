@@ -22,6 +22,7 @@
         .setup {
             padding: 10px 10px 10px 20px;
             width: 900px;
+            background-color: #F8F8F8;
         }
 
 
@@ -74,16 +75,32 @@
             background-color: #FFFFFF;
         }
 
-        dd > input[type="button"] {
+        [type="button"] {
             background-color: #FFFFFF;
             border-radius: 25px;
             border: 2px solid #666666;
         }
 
-        dd > input[type="button"]:hover {
+        input[type="button"]:hover {
             color: blue;
-
         }
+
+        .name {
+            text-align: center;
+            background-color: #E8E8E8;
+            border-radius: 25px;
+            border: 2px solid #666666;
+            margin-bottom: 10px;
+            width: 200px;
+            height: 20px;
+            font-size: 16px;
+        }
+
+        .name:hover{
+            background-color: #FFFFFF;
+        }
+
+
 
       </style>
       <script src="options.js"></script>
@@ -92,8 +109,8 @@
     <body>
       <h1>Add New Setup</h1>
       <div id="setup1" class="hide setup">
-          <div id="setupNameInput1">setupName
-            <label for="setupName">Name:</label>
+          <div id="setupNameInput1">
+            <label for="setupName1">Name:</label>
             <input type="text" class="name" name="setupName" value="" id="setupName1" size="12">
             <div id="setupNameValid1"></div>
             <input type="checkbox" id="RemovePreviousWindows1" value="RemovePreviousWindows" checked>
@@ -121,10 +138,8 @@
       <div id="modifySavedSetups" class="hide">
       </div>
 	  <div id="helpWanted">
-	  	<p>Note: I am currently still working on this chrome extension, if you have any suggestions
-	  	or bugs to report please email autoloadwebdev@gmail.com</p>
-	  	<p>Yes I know it looks ugly, I will make it look better.</p>
-	  </div>	
+	  	<p>Note: If you have any suggestions or bugs to report please email autoloadwebdev@gmail.com</p>
+	  </div>
 	
     </body>
 </html>

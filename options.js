@@ -576,12 +576,18 @@ function createNameSection(name, setupID){
 	var nameDiv = document.createElement("DIV");
 	nameDiv.setAttribute("id", "setupNameInput" + setupID);
 	//adding name
+	//<label for="setupName1">Name:</label>
+	var nameText = document.createElement("Label");
+    nameText.setAttribute("for", "setupName" + setupID);
+    nameText.innerHTML = "Name: ";
+    nameDiv.appendChild(nameText);
+
 	var nameLabel = document.createElement("INPUT");
 	nameLabel.setAttribute("id", "setupName" + setupID);
 	nameLabel.setAttribute("class", "name");
 	nameLabel.setAttribute("name", "setupName");
 	nameLabel.setAttribute("type", "text");
-	nameLabel.setAttribute("size", "12");
+	nameLabel.setAttribute("size", "14");
 	nameLabel.setAttribute("value", name);
 	nameDiv.appendChild(nameLabel);
 	//hide the saved name for the setup so that we can correct it
