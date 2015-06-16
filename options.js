@@ -42,6 +42,10 @@ function addUrl(inputValue){
 	
 	var curWindow = this.parentNode.parentNode.parentNode;
 	curWindow.getElementsByTagName("DL")[0].appendChild(createUrlSection(0, tabIDNumber, value));
+
+    var ddList = curWindow.getElementsByTagName("DL")[0].getElementsByTagName("DD");
+
+    fixFirstURL(ddList);
 }
 
 function createUrlSection(firstUrl, tabIDNumber, value){
@@ -138,7 +142,6 @@ function fixFirstURL(ddList){
     //        deleteButton.setAttribute("class", deleteButton.className + " onlyOne");
     //    }
     //}
-
 
     if(ddList.length > 0){
 
@@ -343,6 +346,7 @@ function saveSetup(){
 				var errorNameMsg = document.createElement("LABEL");
 				errorNameMsg.setAttribute("for", nameInput.id);
 				errorNameMsg.setAttribute("id", "nameErrorMsg" + parentID);
+                errorNameMsg.setAttribute("class", "errorMsg");
 				if(name == ''){
 					errorNameMsg.innerHTML = "Name cannot be empty.";
 				}
@@ -408,10 +412,10 @@ function saveSetup(){
 			//check if first URL tab is not empty, if so error message
 			if(tempTabs[0].value == ''){
 				//alert("url error message");
-				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length == 0){
+				if(tempWindows[i].getElementsByClassName("errorMsg").length == 0){
 					var errorUrlMsg = document.createElement("Label");
 					errorUrlMsg.setAttribute("for", tempTabs[0].id);
-					errorUrlMsg.setAttribute("class", "urlErrorMessage");
+					errorUrlMsg.setAttribute("class", "errorMsg");
 					errorUrlMsg.innerHTML = "Please insert an URL.";
 				
 					//var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
