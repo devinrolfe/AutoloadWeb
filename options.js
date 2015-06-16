@@ -79,30 +79,12 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 	tempAdd.setAttribute("size", "30");
 	tempDD.appendChild(tempAdd);
 	
-	var tempButton = document.createElement("INPUT");
-	tempButton.setAttribute("type", "button");
 	if(firstUrl){
-
-        var extraDeleteButton = document.createElement("INPUT");
-        extraDeleteButton.setAttribute("type", "button");
-        extraDeleteButton.setAttribute("id", "deleteUrlButton" + tabIDNumber);
-        extraDeleteButton.setAttribute("value", "(-) delete URL");
-        extraDeleteButton.setAttribute("class", "urlButton");
-        extraDeleteButton.addEventListener("click", deleteUrl);
-        tempDD.appendChild(extraDeleteButton);
-
-
-
-		tempButton.setAttribute("id", "addUrlButton" + tabIDNumber);
-		tempButton.setAttribute("value", "(+) add URL");
-		tempButton.setAttribute("class", "urlButton");
-		tempButton.addEventListener("click", addUrl);
-		tempDD.appendChild(tempButton);
-
-		var tempErrorDiv = document.createElement("SPAN");
-		tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + tabIDNumber);
-		tempDD.appendChild(tempErrorDiv);
-	}else{
+        createFirstUrlButtons(tempDD, tabIDNumber);
+	}
+    else{
+        var tempButton = document.createElement("INPUT");
+        tempButton.setAttribute("type", "button");
 		tempButton.setAttribute("id", "deleteUrlButton" + tabIDNumber);
 		tempButton.setAttribute("value", "(-) delete URL");
 		tempButton.setAttribute("class", "urlButton");
@@ -110,6 +92,30 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 		tempDD.appendChild(tempButton);
 	}
 	return tempDD;
+}
+
+function createFirstUrlButtons(tempDD, tabIDNumber){
+
+    var extraDeleteButton = document.createElement("INPUT");
+    extraDeleteButton.setAttribute("type", "button");
+    extraDeleteButton.setAttribute("id", "deleteUrlButton" + tabIDNumber);
+    extraDeleteButton.setAttribute("value", "(-) delete URL");
+    extraDeleteButton.setAttribute("class", "urlButton");
+    extraDeleteButton.addEventListener("click", deleteUrl);
+    tempDD.appendChild(extraDeleteButton);
+
+    var tempButton = document.createElement("INPUT");
+    tempButton.setAttribute("type", "button");
+    tempButton.setAttribute("id", "addUrlButton" + tabIDNumber);
+    tempButton.setAttribute("value", "(+) add URL");
+    tempButton.setAttribute("class", "urlButton");
+    tempButton.addEventListener("click", addUrl);
+    tempDD.appendChild(tempButton);
+
+    var tempErrorDiv = document.createElement("SPAN");
+    tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + tabIDNumber);
+    tempDD.appendChild(tempErrorDiv);
+
 }
 
 function deleteUrl(){
@@ -133,20 +139,38 @@ function deleteUrl(){
 
     }
 }
-
+/**
+ * Adds the delete add buttons and error msg span for when buttons are either delete or added
+ * @param ddList
+ */
 function fixFirstURL(ddList){
 
-    //    //make the delete URL button class change
-    //    var deleteButton = ddList[1].getElementsByTagName("INPUT");
-    //    if(deleteButton){
-    //        deleteButton.setAttribute("class", deleteButton.className + " onlyOne");
-    //    }
-    //}
-
     if(ddList.length > 0){
+        var firstDD = ddList[0];
+        //var tabNumber = parseInt(tempTabs[0].id.slice("setupURL".length));
+        var label = firstDD.getElementsByTagName("LABEL")[0];
 
+        label.innerHTML = "URL(Required):";
 
+        var tabNumber = parseInt(label.getAttribute("for").slice("setupURL".length));
 
+        var buttons = firstDD.getElementsByClassName("urlButton");
+
+        if(buttons.length > 0 && buttons[buttons.length - 1].value != "(+) add URL"){
+
+            for(var i=0; i < buttons.length; i++){
+                firstDD.removeChild(buttons[i]);
+            }
+            createFirstUrlButtons(firstDD, tabNumber);
+        }
+
+        var deleteButton = firstDD.getElementsByTagName("INPUT")[1];
+        if(ddList.length == 1){
+            deleteButton.setAttribute("class", deleteButton.className + " onlyOne");
+        }
+        else{
+            deleteButton.setAttribute("class", "urlButton");
+        }
     }
 
 }
