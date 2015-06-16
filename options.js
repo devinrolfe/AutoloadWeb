@@ -197,7 +197,6 @@ function addWindow(inputValue){
 	 */
     windowDiv.setAttribute("draggable", "true");
 
-	
 	if(actionCall){
 		this.parentNode.insertBefore(windowDiv, this);
 	}
