@@ -20,8 +20,23 @@ function setupListeners(){
 	document.getElementById("addWindowButton1").addEventListener("click", addWindow);
 	document.getElementById("saveSetup1").addEventListener("click", saveSetup);
 	
-	
-	
+	var firstWindow = document.getElementById("window1");
+	firstWindow.addEventListener('dragstart', handleDragStart, false);
+    firstWindow.addEventListener('dragend', handleDragEnd, false);
+	firstWindow.addEventListener('dragenter', handleDragEnter, false);
+	firstWindow.addEventListener('dragover', handleDragOver, false);
+	firstWindow.addEventListener('dragleave', handleDragLeave, false);
+    firstWindow.addEventListener('drop', handleDrop, false);
+
+
+	var firstDD = firstWindow.getElementsByTagName("DD")[0];
+	firstDD.addEventListener('dragstart', handleDragStart, false);
+	firstDD.addEventListener('dragend', handleDragEnd, false);
+	firstDD.addEventListener('dragenter', handleDragEnter, false);
+	firstDD.addEventListener('dragover', handleDragOver, false);
+	firstDD.addEventListener('dragleave', handleDragLeave, false);
+    firstDD.addEventListener('drop', handleDrop, false);
+
 	chrome.runtime.onMessage.addListener(
 		  function(request) {
 		    if (request.greeting == "update")
@@ -50,8 +65,15 @@ function addUrl(inputValue){
 
 function createUrlSection(firstUrl, tabIDNumber, value){
 	var tempDD = document.createElement("DD");
+    //TODO: URL DRAG STUFF
 	tempDD.setAttribute("draggable", "true");
-    //TODO: for URL ELEMENTS
+	tempDD.addEventListener('dragstart', handleDragStart, false);
+	tempDD.addEventListener('dragend', handleDragEnd, false);
+	tempDD.addEventListener('dragenter', handleDragEnter, false);
+	tempDD.addEventListener('dragover', handleDragOver, false);
+	tempDD.addEventListener('dragleave', handleDragLeave, false);
+    tempDD.addEventListener('drop', handleDrop, false);
+
 
 	var tempLabel = document.createElement("LABEL");
 	tempLabel.setAttribute("for", "setupURL" + tabIDNumber);
@@ -192,10 +214,17 @@ function addWindow(inputValue){
 	windowDiv.setAttribute("class", "window");
 
 	/*
-	 * TODO:
+	 * TODO: WINDOW DRAG STUFF
 	 * draggable="true" ondragstart="drag(event)"
 	 */
     windowDiv.setAttribute("draggable", "true");
+
+	windowDiv.addEventListener('dragstart', handleDragStart, false);
+	windowDiv.addEventListener('dragend', handleDragEnd, false);
+	windowDiv.addEventListener('dragenter', handleDragEnter, false);
+	windowDiv.addEventListener('dragover', handleDragOver, false);
+	windowDiv.addEventListener('dragleave', handleDragLeave, false);
+    windowDiv.addEventListener('drop', handleDrop, false);
 
 	if(actionCall){
 		this.parentNode.insertBefore(windowDiv, this);
@@ -690,7 +719,7 @@ function createNameSection(name, setupID){
 	
 	var labelForCheckBox =document.createElement("LABEL");
 	labelForCheckBox.setAttribute("id", "RemovePreviousWindowsLabel" + setupID);
-	labelForCheckBox.setAttribute("for", "RemovePreviousWindows");
+	labelForCheckBox.setAttribute("for", "RemovePreviousWindows" + setupID);
 	labelForCheckBox.innerHTML = "Remove all current windows";
 	nameDiv.appendChild(labelForCheckBox);
 	
@@ -698,3 +727,56 @@ function createNameSection(name, setupID){
 	return nameDiv;
 }
 
+
+var DRAGLOCK = false;
+var dragElementTagName = '';
+
+function handleDragStart(e) {
+	if(!DRAGLOCK){
+		DRAGLOCK = true;
+		dragElementTagName = this.tagName;
+		this.style.opacity = '0.4';
+	}
+}
+
+function handleDragEnd(e) {
+
+	DRAGLOCK = false;
+	dragElementTagName = '';
+    this.style.opacity = '1.0';
+
+}
+
+function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation(); // stops the browser from redirecting.
+    }
+    this.classList.remove('over');
+}
+
+function handleDragOver(e) {
+
+	if(DRAGLOCK) {
+		if (e.preventDefault) {
+			e.preventDefault();
+		}
+
+		e.dataTransfer.dropEffect = 'move';
+	}
+	return false;
+}
+
+function handleDragEnter(e) {
+
+	if (DRAGLOCK && this.tagName == dragElementTagName || dragElementTagName == 'DD'){
+		this.classList.add('over');
+	}
+
+}
+
+function handleDragLeave(e) {
+
+	if(DRAGLOCK) {
+		this.classList.remove('over');
+	}
+}
