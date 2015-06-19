@@ -19,7 +19,14 @@ function setupListeners(){
 	document.getElementById("addUrlButton2").addEventListener("click", addUrl);
 	document.getElementById("addWindowButton1").addEventListener("click", addWindow);
 	document.getElementById("saveSetup1").addEventListener("click", saveSetup);
-	
+
+
+    var firstSetup = document.getElementById('setup1');
+    firstSetup.addEventListener('dragenter', handleDragEnter, false);
+    firstSetup.addEventListener('dragover', handleDragOver, false);
+    firstSetup.addEventListener('dragleave', handleDragLeave, false);
+    firstSetup.addEventListener('drop', handleDrop, false);
+
 	var firstWindow = document.getElementById("window1");
 	firstWindow.addEventListener('dragstart', handleDragStart, false);
     firstWindow.addEventListener('dragend', handleDragEnd, false);
@@ -28,14 +35,15 @@ function setupListeners(){
 	firstWindow.addEventListener('dragleave', handleDragLeave, false);
     firstWindow.addEventListener('drop', handleDrop, false);
 
-
 	var firstDD = firstWindow.getElementsByTagName("DD")[0];
 	firstDD.addEventListener('dragstart', handleDragStart, false);
 	firstDD.addEventListener('dragend', handleDragEnd, false);
 	firstDD.addEventListener('dragenter', handleDragEnter, false);
 	firstDD.addEventListener('dragover', handleDragOver, false);
-	firstDD.addEventListener('dragleave', handleDragLeave, false);
+    firstDD.addEventListener('dragleave', handleDragLeave, false);
     firstDD.addEventListener('drop', handleDrop, false);
+
+
 
 	chrome.runtime.onMessage.addListener(
 		  function(request) {
@@ -557,6 +565,12 @@ function updateModifySetupList(webSetup){
 	var setupID = setupIdCount++;
 	setupDiv.setAttribute("id", "setup" + setupID);
 	setupDiv.setAttribute("class", "setup");
+
+    setupDiv.addEventListener('dragenter', handleDragEnter, false);
+    setupDiv.addEventListener('dragover', handleDragOver, false);
+    setupDiv.addEventListener('dragleave', handleDragLeave, false);
+    setupDiv.addEventListener('drop', handleDrop, false);
+
 	mainDiv.appendChild(setupDiv);
 	//adding name div
 	var nameDiv = createNameSection(webSetup.name, setupID);
@@ -730,12 +744,18 @@ function createNameSection(name, setupID){
 
 var DRAGLOCK = false;
 var dragElementTagName = '';
+var dragSrcElement = null;
 
 function handleDragStart(e) {
 	if(!DRAGLOCK){
 		DRAGLOCK = true;
 		dragElementTagName = this.tagName;
 		this.style.opacity = '0.4';
+
+        dragSrcElement = this;
+
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
 	}
 }
 
@@ -752,6 +772,46 @@ function handleDrop(e) {
         e.stopPropagation(); // stops the browser from redirecting.
     }
     this.classList.remove('over');
+
+    if (dragSrcElement != this) {
+
+        //TODO: SWAPPING PROPERLY
+
+        if (dragSrcElement.tagName == 'DIV' && this.tagName == 'DD') { // don't swap window into dd
+            return false;
+        }
+        else {
+            if (dragSrcElement.tagName == 'DD' && this.tagName == 'DIV') { //place dd at end of window url
+                this.getElementsByTagName('DL')[0].appendChild(dragSrcElement);
+            }
+            else if (dragSrcElement.tagName == 'DD' && this.tagName == 'DD') { //place new dd in spot and move old down 1
+               this.parentNode.parentNode.getElementsByTagName('DL')[0].insertBefore(dragSrcElement, this);
+            }
+            else if (dragSrcElement.tagName == 'DIV' && this.tagName == 'DIV') { //place window in new spot
+                //check if target div is a window or setup, so we can decide where to put it
+                if (this.className == 'setup') {//is setup, so add window at bottom
+                    var tempSetup = this.getElementsByTagName('DIV')[2];
+                    var tempButton = tempSetup.getElementsByTagName('INPUT');
+                    var tempButton = tempButton[tempButton.length - 1];
+
+                    tempSetup.insertBefore(dragSrcElement, tempButton);
+                }
+                else {//window place before window
+                    this.parentNode.insertBefore(dragSrcElement, this);
+                }
+            }
+            //delete the dragged element and fire off trigger to clean up
+        }
+
+
+        //dragSrcElement.innerHTML = this.innerHTML;
+        //this.innerHTML = e.dataTransfer.getData('text/html');
+
+
+    }
+
+    return false;
+
 }
 
 function handleDragOver(e) {
@@ -768,7 +828,7 @@ function handleDragOver(e) {
 
 function handleDragEnter(e) {
 
-	if (DRAGLOCK && this.tagName == dragElementTagName || dragElementTagName == 'DD'){
+	if (DRAGLOCK && this.tagName == dragElementTagName || (dragElementTagName == 'DD' && this.className != 'setup')){
 		this.classList.add('over');
 	}
 
