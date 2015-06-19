@@ -852,9 +852,7 @@ function cleanupSetups(dragSrcElementParent) {
 
             }
             else{
-                //alert(2);
-                //dragSrcElementParent.remove();
-                //cleanupSetups(dragSrcElementParent.parentNode.parentNode);
+                dragSrcElementParent.parentNode.parentNode.remove();
             }
 
 
