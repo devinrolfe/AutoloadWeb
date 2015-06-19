@@ -776,6 +776,8 @@ function handleDrop(e) {
     if (dragSrcElement != this) {
 
         //TODO: SWAPPING PROPERLY
+        dragSrcElementParent = dragSrcElement.parentNode;
+
 
         if (dragSrcElement.tagName == 'DIV' && this.tagName == 'DD') { // don't swap window into dd
             return false;
@@ -800,19 +802,72 @@ function handleDrop(e) {
                     this.parentNode.insertBefore(dragSrcElement, this);
                 }
             }
-            //delete the dragged element and fire off trigger to clean up
+            //cleanup
+            cleanupSetups(dragSrcElementParent);
+
         }
+    }
+
+    return false;
+}
+
+function cleanupSetups(dragSrcElementParent) {
+
+    if (dragSrcElementParent.tagName == 'DL') { //check if dd list is empty if so remove window
+        alert(1);
+        var ddList = dragSrcElementParent.getElementsByTagName('DD');
+
+        if (ddList.length < 1) {
+            //add a new dd spot if window1
+
+            var tempWindow = dragSrcElementParent.parentNode;
+
+            if (tempWindow.parentNode.id == 'setupList1') { //add new dd
+                dragSrcElementParent.appendChild(createUrlSection(1, tabIdCount++, ''));
+            }
+            else{ // check if window should be deleted
+                cleanupSetups(tempWindow);
+            }
+        }
+    }
+    else if (dragSrcElementParent.className == 'setup') {
+        alert(1);
+    }
+    else if (dragSrcElementParent.tagName == 'DIV') { //check if window list is empty
+
+        var windowList = dragSrcElementParent.parentNode.getElementsByClassName('window');
+
+        if (windowList.length < 1) {
+
+            var tempSetup = dragSrcElementParent.parentNode;
 
 
-        //dragSrcElement.innerHTML = this.innerHTML;
-        //this.innerHTML = e.dataTransfer.getData('text/html');
+
+            if (tempSetup.id == 'setup1') { //add new window
+
+                document.getElementById('addWindowButton1').remove();
+
+                addWindow(1).getElementsByTagName("DL")[0].appendChild(createUrlSection(1, tabIdCount++, ''));
+
+
+            }
+            else{
+                //alert(2);
+                //dragSrcElementParent.remove();
+                //cleanupSetups(dragSrcElementParent.parentNode.parentNode);
+            }
+
+
+
+        }
 
 
     }
 
-    return false;
+
 
 }
+
 
 function handleDragOver(e) {
 
