@@ -303,7 +303,8 @@ function addWindow(inputValue){
 	if(actionCall){
 		tempDL.appendChild(createUrlSection(1, tabIDNumber, ""));
 	}
-
+    //TODO:
+    //fixFirstURL(tempDL.getElementsByTagName("DD"));
     fixFirstWindow(setupListDiv);
 
 	return windowDiv;
@@ -649,6 +650,7 @@ function updateModifySetupList(webSetup){
 				currentDL.appendChild(createUrlSection(0, tabIdCount++, urlName));
 			}
 		}
+        fixFirstURL(currentDL.getElementsByTagName("DD"));
 	}
 }
 
