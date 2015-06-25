@@ -2,24 +2,19 @@ var tabIdCount = 3;
 var windowIdCount = 2;
 var setupIdCount = 2;
 
-
 //Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
 //	chrome.storage.sync.clear(); //use to clear storage
 	setupListeners();
 	loadExistingSetups();
-
-
-
 });
-
 
 function setupListeners(){
     document.getElementById("deleteUrlButton1").addEventListener("click", deleteUrl);
 	document.getElementById("addUrlButton2").addEventListener("click", addUrl);
+    document.getElementById("deleteWindowButton1").addEventListener("click", deleteWindow);
 	document.getElementById("addWindowButton1").addEventListener("click", addWindow);
 	document.getElementById("saveSetup1").addEventListener("click", saveSetup);
-
 
     var firstSetup = document.getElementById('setup1');
     firstSetup.addEventListener('dragenter', handleDragEnter, false);
@@ -73,7 +68,7 @@ function addUrl(inputValue){
 
 function createUrlSection(firstUrl, tabIDNumber, value){
 	var tempDD = document.createElement("DD");
-    //TODO: URL DRAG STUFF
+
 	tempDD.setAttribute("draggable", "true");
 	tempDD.addEventListener('dragstart', handleDragStart, false);
 	tempDD.addEventListener('dragend', handleDragEnd, false);
@@ -221,10 +216,6 @@ function addWindow(inputValue){
 	windowDiv.setAttribute("id", "window" + windowIDNumber);
 	windowDiv.setAttribute("class", "window");
 
-	/*
-	 * TODO: WINDOW DRAG STUFF
-	 * draggable="true" ondragstart="drag(event)"
-	 */
     windowDiv.setAttribute("draggable", "true");
 
 	windowDiv.addEventListener('dragstart', handleDragStart, false);
@@ -285,26 +276,24 @@ function addWindow(inputValue){
 	windowWidth.setAttribute("type", "hidden");
 	windowWidth.setAttribute("value", 1);
 	windowDiv.appendChild(windowWidth);
-	
+
+    if(firstWindow){
+        var tempAdd = document.createElement("INPUT");
+        tempAdd.setAttribute("type", "button");
+        tempAdd.setAttribute("id", "addWindowButton" + setupID);
+        tempAdd.setAttribute("value", "(+) Add a new window");
+        tempAdd.addEventListener("click", addWindow);
+        windowDiv.parentNode.appendChild(tempAdd);
+    }
+
 	//add delete window button
-	if(actionCall || !firstWindow){
-		var tempDelete = document.createElement("INPUT");
-		tempDelete.setAttribute("type", "button");
-		tempDelete.setAttribute("id", "deleteWindowButton" + windowIDNumber);
-		tempDelete.setAttribute("value", "(-) Delete Window");
-		tempDelete.addEventListener("click", deleteWindow);
-		windowDiv.appendChild(tempDelete);
-	}
-	else{
-		var tempAdd = document.createElement("INPUT");
-		tempAdd.setAttribute("type", "button");
-		tempAdd.setAttribute("id", "addWindowButton" + setupID);
-		tempAdd.setAttribute("value", "(+) Add a new window");
-		//NEED TO ADD LISTENER
-		tempAdd.addEventListener("click", addWindow);
-		
-		windowDiv.parentNode.appendChild(tempAdd);
-	}
+    var tempDelete = document.createElement("INPUT");
+    tempDelete.setAttribute("type", "button");
+    tempDelete.setAttribute("id", "deleteWindowButton" + windowIDNumber);
+    tempDelete.setAttribute("value", "(-) Delete Window");
+    tempDelete.addEventListener("click", deleteWindow);
+    windowDiv.appendChild(tempDelete);
+
 	var tempDL = document.createElement("DL");
 	windowDiv.appendChild(tempDL);
 
@@ -314,15 +303,36 @@ function addWindow(inputValue){
 	if(actionCall){
 		tempDL.appendChild(createUrlSection(1, tabIDNumber, ""));
 	}
+
+    fixFirstWindow(setupListDiv);
+
 	return windowDiv;
 }
 
 function deleteWindow(){
 	var window = this.parentNode;
 	var parent = window.parentNode;
-	parent.removeChild(window);
+
+    if (parent.getElementsByClassName('window').length > 1){
+        parent.removeChild(window);
+
+        fixFirstWindow(parent);
+    }
 }
 
+function fixFirstWindow(setupList){
+
+    var tempWindows = setupList.getElementsByClassName('window');
+    var deleteButton = tempWindows[0].getElementsByTagName('input')[5];
+
+
+    if(tempWindows.length < 2){
+       deleteButton.classList.add('onlyOne');
+    }
+    else{
+        deleteButton.classList.remove('onlyOne');
+    }
+}
 
 function deleteSetup(){
 	var setup = this.parentNode;
@@ -588,12 +598,6 @@ function updateModifySetupList(webSetup){
 	var setupListDiv = document.createElement("DIV");
 	setupListDiv.setAttribute("id", "setupList" + setupID);
 
-	/*
-	 * TODO: NEW
-	 * ondrop="drop(event)" ondragover="allowDrop(event)"
-	 */
-
-
 	setupDiv.appendChild(setupListDiv);
 	//add the br
 	var br = document.createElement("BR");
@@ -763,11 +767,9 @@ function handleDragStart(e) {
 }
 
 function handleDragEnd(e) {
-
 	DRAGLOCK = false;
 	dragElementTagName = '';
     this.style.opacity = '1.0';
-
 }
 
 function handleDrop(e) {
@@ -778,7 +780,6 @@ function handleDrop(e) {
 
     if (dragSrcElement != this) {
 
-        //TODO: SWAPPING PROPERLY
         dragSrcElementParent = dragSrcElement.parentNode;
 
 
