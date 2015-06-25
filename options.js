@@ -180,7 +180,7 @@ function fixFirstURL(ddList){
         //var tabNumber = parseInt(tempTabs[0].id.slice("setupURL".length));
         var label = firstDD.getElementsByTagName("LABEL")[0];
 
-        label.innerHTML = "URL(Required):";
+        label.innerHTML = "URL(Required): ";
 
         var tabNumber = parseInt(label.getAttribute("for").slice("setupURL".length));
 
@@ -443,10 +443,13 @@ function saveSetup(){
 		
 		
 		var tempWindows = parent.getElementsByClassName("window");
+        //alert("length is " + tempWindows.length);
 		
 		var urlReturn  = 0;
 		for(i=0; i<tempWindows.length; i++){
 			var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
+
+            //alert("window # is " + windowNumber);
 			//NEED TO GET PREVIOUS WINDOW INFORMATION
 			/*
 			 * NEED HIDDEN VARIABLES HERE TO KEEP TRACK OF WINDOW DIMENSIONS
@@ -466,9 +469,9 @@ function saveSetup(){
 						document.getElementById("windowMaximized" + windowNumber).value == "true" ? true : false
 						);
 			}
-			
+
 			var tempTabs = tempWindows[i].getElementsByClassName("urlInput");
-			
+
 			//check if first URL tab is not empty, if so error message
 			if(tempTabs[0].value == ''){
 				//alert("url error message");
@@ -489,7 +492,7 @@ function saveSetup(){
 				if(tempWindows[i].getElementsByClassName("urlErrorMessage").length != 0){
 //					var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
 					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + windowNumber);
-					
+
 					errorMsgDiv.removeChild(errorMsgDiv.firstChild);
 				}
 			}
@@ -814,7 +817,7 @@ function handleDrop(e) {
 function cleanupSetups(dragSrcElementParent) {
 
     if (dragSrcElementParent.tagName == 'DL') { //check if dd list is empty if so remove window
-        alert(1);
+
         var ddList = dragSrcElementParent.getElementsByTagName('DD');
 
         if (ddList.length < 1) {
@@ -831,7 +834,7 @@ function cleanupSetups(dragSrcElementParent) {
         }
     }
     else if (dragSrcElementParent.className == 'setup') {
-        alert(1);
+        //do nothing
     }
     else if (dragSrcElementParent.tagName == 'DIV') { //check if window list is empty
 
@@ -853,19 +856,13 @@ function cleanupSetups(dragSrcElementParent) {
             }
             else{
                 dragSrcElementParent.parentNode.parentNode.remove();
+                //need to update delete button potentially
+                fixFirstURL(dragSrcElementParent.getElementsByTagName('DD'));
+
             }
-
-
-
         }
-
-
     }
-
-
-
 }
-
 
 function handleDragOver(e) {
 

@@ -75,7 +75,7 @@
         }
 
         .spaceSpan {
-            margin-right: 3px;
+            margin-right: 2px;
         }
 
         dd {
@@ -185,9 +185,14 @@
           <div id="setupList1">
             <div id="window1" class="window" draggable="true">
               <h3>Window</h3>
+              <input id="windowMaximized1" type="hidden" value="true">
+              <input id="windowTop1" type="hidden" value="1">
+              <input id="windowLeft1" type="hidden" value="1">
+              <input id="windowHeight1" type="hidden" value="1">
+              <input id="windowWidth1" type="hidden" value="1">
               <dl>
                 <dd draggable="true">
-                  <label for="setupURL1">URL(Required):</label>
+                  <label for="setupURL1">URL(Required): </label>
                   <input type="text" class="urlInput" name="setupURL" value="" id="setupURL1" size="30"/>
                   <input id="deleteUrlButton1" type="Button" class="urlButton onlyOne" value="(-) delete URL"/>
                   <input id="addUrlButton2" type="button" class="urlButton" value="(+) add URL"/>
