@@ -110,17 +110,14 @@ function loadSetup(){
 		if(websiteChoice == null){
 			return;
 		}
-
 		//check if the remove all previous windows is set, if so remove all current windows.
 		if(websiteChoice.removePrevWindows){
 			chrome.windows.getAll({populate:true},
 				function(windows){
-					////collect all the windows and remove them.
-					//windows.forEach(function(window){
-					//	chrome.windows.remove(window.id);
-					//});
-					prevWindows = windows;
-					removeAll = true;
+					//collect all the windows and remove them.
+					windows.forEach(function(window){
+						chrome.windows.remove(window.id);
+					});
 				});
 		}
 		else{
@@ -129,49 +126,26 @@ function loadSetup(){
 
 		for(var i=0; i<websiteChoice.windows.length; i++){
 			if(i == 0){
-				loadWindow(websiteChoice.windows[i], true);
+				loadWindow(websiteChoice.windows[i], true, false);
 			}
-			else{
-				loadWindow(websiteChoice.windows[i], false);
+			else if(i == websiteChoice.windows.length - 1){
+				loadWindow(websiteChoice.windows[i], false, true);
 			}
+            else{
+                loadWindow(websiteChoice.windows[i], false, false);
+            }
 		}
-
-		//below is a little trick to make the main chrome window the focus
-		setTimeout(function(){
-			if(windowId != null){
-				chrome.windows.update(windowId, {'focused':true});
-			}
-			windowId = null;
-		}, 500);
-
-		setTimeout(function(){
-			if(removeAll){
-				//collect all the windows and remove them.
-				prevWindows.forEach(function(window){
-					chrome.windows.remove(window.id);
-				});
-				prevWindows = null;
-			}else{
-				closeExtension();
-			}
-			removeAll = false;
-
-		}, 500);
-
-
-
 	});
 }
 
-function loadWindow(window, focus){
+function loadWindow(window, focus, lastWindow){
 //	var tempUrl = checkUrl(window.tabs[0].url);
-
-
 
 	var tempUrl = window.tabs[0].url;
 	chrome.windows.create(
-			{'url':tempUrl, 'focused': focus, 'top': window.top, 'left': window.left, 'height': window.height, 'width': window.width},
+			{'url':tempUrl, 'focused': false, 'top': window.top, 'left': window.left, 'height': window.height, 'width': window.width},
 			function(chromeWindow){
+
 				
 				if(focus){windowId = chromeWindow.id;};
 				
@@ -186,15 +160,19 @@ function loadWindow(window, focus){
 							}
 					);
 				}
-				if(window.isMaximized){
 
+				if(window.isMaximized){
 					chrome.windows.update(chromeWindow.id, {state:'maximized'});
 				}
+
+
+                if(lastWindow){
+                    chrome.windows.update(windowId, {'focused':true});
+                    windowId = null;
+                }
+
 			}
 	);
-	
-	
-	
 }
 
 function checkUrl(tempUrl){
