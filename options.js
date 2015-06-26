@@ -793,7 +793,35 @@ function handleDrop(e) {
                 this.getElementsByTagName('DL')[0].appendChild(dragSrcElement);
             }
             else if (dragSrcElement.tagName == 'DD' && this.tagName == 'DD') { //place new dd in spot and move old down 1
-               this.parentNode.parentNode.getElementsByTagName('DL')[0].insertBefore(dragSrcElement, this);
+                this.parentNode.parentNode.getElementsByTagName('DL')[0].insertBefore(dragSrcElement, this);
+
+                var urlButtons = this.getElementsByTagName('input');
+
+                if(urlButtons.length >= 3 && urlButtons[urlButtons.length - 1].value == "(+) add URL"){
+                    urlButtons[urlButtons.length - 2].classList.remove('onlyOne');
+                    this.removeChild(urlButtons[urlButtons.length - 1]);
+                    this.removeChild(this.getElementsByTagName('span')[0]);
+
+                    var newFirstUrlButtons = dragSrcElement.getElementsByTagName('input');
+
+                    if(newFirstUrlButtons.length < 3){
+                        var tabIDNumber = parseInt(newFirstUrlButtons[0].id.slice("setupURL".length));
+
+                        var tempAddButton = document.createElement("INPUT");
+                        tempAddButton.setAttribute("type", "button");
+                        tempAddButton.setAttribute("id", "addUrlButton" + tabIDNumber);
+                        tempAddButton.setAttribute("value", "(+) add URL");
+                        tempAddButton.setAttribute("class", "urlButton");
+                        tempAddButton.addEventListener("click", addUrl);
+
+                        var tempErrorDiv = document.createElement("SPAN");
+                        tempErrorDiv.setAttribute("id", "windowURLErrorMsg" + tabIDNumber);
+
+                        dragSrcElement.appendChild(tempAddButton);
+                        dragSrcElement.appendChild(tempErrorDiv);
+                    }
+
+                }
             }
             else if (dragSrcElement.tagName == 'DIV' && this.tagName == 'DIV') { //place window in new spot
                 //check if target div is a window or setup, so we can decide where to put it
@@ -810,7 +838,6 @@ function handleDrop(e) {
             }
             //cleanup
             cleanupSetups(dragSrcElementParent);
-
         }
     }
 
