@@ -2,6 +2,8 @@
 //mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
 
 var windowId = null;
+var listOfWindowIds = []
+
 
 var removeAll = false;
 var prevWindows = null;
@@ -98,7 +100,6 @@ function loadSetup(){
 		//items.webSetupsList is parsed already when it is saved, so we should turn it back into an object.
 		var savedWebChoicesString = items.webSetupsList;
 
-
 		var websiteChoice = null;
 		//put all the objects into a list
 		for(var i=0; i<savedWebChoicesString.length; i++){
@@ -116,7 +117,8 @@ function loadSetup(){
 				function(windows){
 					//collect all the windows and remove them.
 					windows.forEach(function(window){
-						chrome.windows.remove(window.id);
+						//chrome.windows.remove(window.id);
+                        listOfWindowIds.push(window.id);
 					});
 				});
 		}
@@ -165,10 +167,14 @@ function loadWindow(window, focus, lastWindow){
 					chrome.windows.update(chromeWindow.id, {state:'maximized'});
 				}
 
-
                 if(lastWindow){
-                    chrome.windows.update(windowId, {'focused':true});
-                    windowId = null;
+                    for(var i=0; i< listOfWindowIds.length; i++){
+                        var tempWindowId = listOfWindowIds.pop();
+                        chrome.windows.remove(tempWindowId);
+                    }
+                    chrome.windows.update(windowId, {focused: true});
+
+                    listOfWindowIds = []
                 }
 
 			}
