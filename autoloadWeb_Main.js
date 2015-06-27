@@ -246,7 +246,7 @@ function saveCurrentSetUp(){
 				//ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
 				//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
 				window.tabs.forEach(function(tab){
-					if(tab.url != "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"){
+					if(tab.url != "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"){
 						var webTab = new WebsiteTab(tab.url);
 						webWindow.tabs.push(webTab);
 					}
@@ -282,7 +282,7 @@ function optionsFunction(){
 	//this will open the options.html, but will first check if the tab is already open
 	//ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
 	//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
-	chrome.tabs.query({url: "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"},
+	chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"},
 			function(array_of_Tabs){
 				var tab = array_of_Tabs[0];
 				if(tab != null){
@@ -348,7 +348,7 @@ function quickSaveFunction(){
                         //ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
                         //mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
                         window.tabs.forEach(function(tab){
-                            if(tab.url != "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"){
+                            if(tab.url != "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"){
                                 var webTab = new WebsiteTab(tab.url);
                                 webWindow.tabs.push(webTab);
                             }
@@ -401,7 +401,7 @@ function quickSaveFunction(){
                                     //this will open the options.html, but will first check if the tab is already open
                                     //ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
                                     //mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
-                                    chrome.tabs.query({url: "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"},
+                                    chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"},
                                         function(array_of_Tabs){
                                             var tab = array_of_Tabs[0];
                                             if(tab != null){
