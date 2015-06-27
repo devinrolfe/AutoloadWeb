@@ -126,24 +126,27 @@ function loadSetup(){
 			removeAll = false;
 		}
 
-		for(var i=0; i<websiteChoice.windows.length; i++){
-			if(i == 0){
-				loadWindow(websiteChoice.windows[i], true, false);
-			}
-			else if(i == websiteChoice.windows.length - 1){
-				loadWindow(websiteChoice.windows[i], false, true);
-			}
-            else{
+        for (var i = 0; i < websiteChoice.windows.length; i++) {
+            if (i == 0 && i == websiteChoice.windows.length - 1) {
+                loadWindow(websiteChoice.windows[i], true, true);
+            }
+            else if (i == 0) {
+                loadWindow(websiteChoice.windows[i], true, false);
+            }
+            else if (i == websiteChoice.windows.length - 1) {
+                loadWindow(websiteChoice.windows[i], false, true);
+            }
+            else {
                 loadWindow(websiteChoice.windows[i], false, false);
             }
-		}
+        }
 	});
 }
 
 function loadWindow(window, focus, lastWindow){
-//	var tempUrl = checkUrl(window.tabs[0].url);
+	var tempUrl = checkUrl(window.tabs[0].url);
 
-	var tempUrl = window.tabs[0].url;
+	//var tempUrl = window.tabs[0].url;
 	chrome.windows.create(
 			{'url':tempUrl, 'focused': false, 'top': window.top, 'left': window.left, 'height': window.height, 'width': window.width},
 			function(chromeWindow){
@@ -152,8 +155,8 @@ function loadWindow(window, focus, lastWindow){
 				if(focus){windowId = chromeWindow.id;};
 				
 				for(var i=1; i<window.tabs.length; i++){
-//					tempUrl = checkUrl(window.tabs[i].url);
-					tempUrl = window.tabs[i].url;
+					tempUrl = checkUrl(window.tabs[i].url);
+					//tempUrl = window.tabs[i].url;
 					
 					chrome.tabs.create(
 							{'windowId':chromeWindow.id, 'url':tempUrl, 'active':false, 'selected':false},
@@ -168,15 +171,17 @@ function loadWindow(window, focus, lastWindow){
 				}
 
                 if(lastWindow){
-                    for(var i=0; i< listOfWindowIds.length; i++){
+
+                    while(listOfWindowIds.length > 0){
                         var tempWindowId = listOfWindowIds.pop();
                         chrome.windows.remove(tempWindowId);
                     }
+
+
+
                     chrome.windows.update(windowId, {focused: true});
 
-                    listOfWindowIds = []
                 }
-
 			}
 	);
 }
@@ -189,15 +194,17 @@ function checkUrl(tempUrl){
 	var pattern1 = /https:\/\/www\./;
 	var pattern2 = /http:\/\/www\./;
 	var pattern3 = /www\./;
+    var pattern4 = /http:\/\//;
 	
-	if(pattern1.test(tempUrl) || pattern2.test(tempUrl)){
+	if(pattern1.test(tempUrl) || pattern2.test(tempUrl) || pattern3.test(tempUrl) || pattern4.test(tempUrl)){
 		//done nothing to url since it is in good from
 	}
-	else if(pattern3.test(tempUrl)){
-		tempUrl = "http://" + tempUrl;
-	}
+	//else if(pattern3.test(tempUrl)){
+	//	tempUrl = "http://" + tempUrl;
+	//}
 	else{
-		tempUrl = "http://www." + tempUrl;
+		//tempUrl = "http://www." + tempUrl;
+        tempUrl = "www." + tempUrl;
 	}
 	return tempUrl;
 }
@@ -225,7 +232,7 @@ function saveCurrentSetUp(){
 				//ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
 				//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
 				window.tabs.forEach(function(tab){
-					if(tab.url != "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"){
+					if(tab.url != "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"){
 						var webTab = new WebsiteTab(tab.url);
 						webWindow.tabs.push(webTab);
 					}
@@ -261,7 +268,7 @@ function optionsFunction(){
 	//this will open the options.html, but will first check if the tab is already open
 	//ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
 	//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
-	chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"},
+	chrome.tabs.query({url: "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"},
 			function(array_of_Tabs){
 				var tab = array_of_Tabs[0];
 				if(tab != null){
