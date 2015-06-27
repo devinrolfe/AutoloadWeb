@@ -378,7 +378,6 @@ function quickSaveFunction(){
                             else{
                                 boolReturn = 1;
                             }
-
                         }
 
                         //if something weird happen, just show error highlight
