@@ -22,3 +22,4 @@ function WebsiteWindow(top, left, height, width, isMaximized){
 function WebsiteTab(url){
 	this.url = url;
 }
+

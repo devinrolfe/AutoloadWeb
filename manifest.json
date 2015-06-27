@@ -10,7 +10,7 @@
   
   "options_page": "options.html",
   "description": "This extension loads websites automatically with a click of a button.",
-  "version": "1.0.5",
+  "version": "1.0.6",
 
   "permissions": [
     "tabs",

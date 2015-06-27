@@ -10,9 +10,10 @@ var prevWindows = null;
 
 // Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
-	
-  autoloadWebObject.loadSavedChoices_();
-  //chrome.storage.sync.clear();
+    autoloadWebObject.loadSavedChoices_();
+    //chrome.storage.sync.clear();
+    //chrome.storage.sync.set({'curSetupName': ''}, function(){
+    //});
 });
 
 var autoloadWebObject = {
@@ -47,7 +48,7 @@ var autoloadWebObject = {
 
 
             var tdSetup = document.createElement("TD");
-            tdSetup.setAttribute("colspan", "2");
+            tdSetup.setAttribute("colspan", "3");
             tempTR.appendChild(tdSetup);
 
 			var tempButton = document.createElement("INPUT");
@@ -65,17 +66,30 @@ var autoloadWebObject = {
 		optionsRow.setAttribute("id", "optionRow");
 		table.appendChild(optionsRow);
 		//1.
-		var option1 = document.createElement("TD");
-		var option1Button = document.createElement("INPUT");
-		option1Button.setAttribute("type", "button");
-		option1Button.setAttribute("name", "option1");
-		option1Button.setAttribute("id", "option1");
-		option1Button.setAttribute("value", "save current setup");
-		
-		option1Button.addEventListener("click", saveCurrentSetUp);
-		option1.appendChild(option1Button);
-		optionsRow.appendChild(option1);
-		//2.
+        var quickSaveTD = document.createElement("TD");
+        var quickSaveButton = document.createElement("INPUT");
+        quickSaveButton.setAttribute("type", "button");
+        quickSaveButton.setAttribute("name", "quickSaveOption");
+        quickSaveButton.setAttribute("id", "quickSaveOption");
+        quickSaveButton.setAttribute("value", "Quick Save");
+
+        quickSaveButton.addEventListener("click", quickSaveFunction);
+        quickSaveTD.appendChild(quickSaveButton);
+        optionsRow.appendChild(quickSaveTD);
+
+        //2.
+        var option1 = document.createElement("TD");
+        var option1Button = document.createElement("INPUT");
+        option1Button.setAttribute("type", "button");
+        option1Button.setAttribute("name", "option1");
+        option1Button.setAttribute("id", "option1");
+        option1Button.setAttribute("value", "Save Current Setup");
+
+        option1Button.addEventListener("click", saveCurrentSetUp);
+        option1.appendChild(option1Button);
+        optionsRow.appendChild(option1);
+
+		//3.
 		var options = document.createElement("TD");
 		var optionsButton = document.createElement("INPUT");
 		optionsButton.setAttribute("type", "button");
@@ -89,58 +103,61 @@ var autoloadWebObject = {
 
 };
 function loadSetup(){
-
 	var name = this.value;
-	
-	chrome.storage.sync.get(["webSetupsList"], function(items){
 
-		if(items == null || items.webSetupsList == null){
-			return;
-		}
-		//items.webSetupsList is parsed already when it is saved, so we should turn it back into an object.
-		var savedWebChoicesString = items.webSetupsList;
+    //new
+    chrome.storage.sync.set({'curSetupName': name}, function(){
 
-		var websiteChoice = null;
-		//put all the objects into a list
-		for(var i=0; i<savedWebChoicesString.length; i++){
-			if(name == JSON.parse(savedWebChoicesString[i]).name){
-				websiteChoice = JSON.parse(savedWebChoicesString[i]);
-				break;
-			}
-		}
-		if(websiteChoice == null){
-			return;
-		}
-		//check if the remove all previous windows is set, if so remove all current windows.
-		if(websiteChoice.removePrevWindows){
-			chrome.windows.getAll({populate:true},
-				function(windows){
-					//collect all the windows and remove them.
-					windows.forEach(function(window){
-						//chrome.windows.remove(window.id);
-                        listOfWindowIds.push(window.id);
-					});
-				});
-		}
-		else{
-			removeAll = false;
-		}
+        chrome.storage.sync.get(["webSetupsList"], function(items){
 
-        for (var i = 0; i < websiteChoice.windows.length; i++) {
-            if (i == 0 && i == websiteChoice.windows.length - 1) {
-                loadWindow(websiteChoice.windows[i], true, true);
+            if(items == null || items.webSetupsList == null){
+                return;
             }
-            else if (i == 0) {
-                loadWindow(websiteChoice.windows[i], true, false);
+            //items.webSetupsList is parsed already when it is saved, so we should turn it back into an object.
+            var savedWebChoicesString = items.webSetupsList;
+
+            var websiteChoice = null;
+            //put all the objects into a list
+            for(var i=0; i<savedWebChoicesString.length; i++){
+                if(name == JSON.parse(savedWebChoicesString[i]).name){
+                    websiteChoice = JSON.parse(savedWebChoicesString[i]);
+                    break;
+                }
             }
-            else if (i == websiteChoice.windows.length - 1) {
-                loadWindow(websiteChoice.windows[i], false, true);
+            if(websiteChoice == null){
+                return;
             }
-            else {
-                loadWindow(websiteChoice.windows[i], false, false);
+            //check if the remove all previous windows is set, if so remove all current windows.
+            if(websiteChoice.removePrevWindows){
+                chrome.windows.getAll({populate:true},
+                    function(windows){
+                        //collect all the windows and remove them.
+                        windows.forEach(function(window){
+                            //chrome.windows.remove(window.id);
+                            listOfWindowIds.push(window.id);
+                        });
+                    });
             }
-        }
-	});
+            else{
+                removeAll = false;
+            }
+
+            for (var i = 0; i < websiteChoice.windows.length; i++) {
+                if (i == 0 && i == websiteChoice.windows.length - 1) {
+                    loadWindow(websiteChoice.windows[i], true, true);
+                }
+                else if (i == 0) {
+                    loadWindow(websiteChoice.windows[i], true, false);
+                }
+                else if (i == websiteChoice.windows.length - 1) {
+                    loadWindow(websiteChoice.windows[i], false, true);
+                }
+                else {
+                    loadWindow(websiteChoice.windows[i], false, false);
+                }
+            }
+        });
+    });
 }
 
 function loadWindow(window, focus, lastWindow){
@@ -209,11 +226,8 @@ function checkUrl(tempUrl){
 	return tempUrl;
 }
 
-
-
-
 function saveCurrentSetUp(){
-	
+
 	chrome.windows.getAll({populate:true},
 		function(windows){
 			
@@ -221,9 +235,9 @@ function saveCurrentSetUp(){
 			//collect all the windows and respective tabs.
 			windows.forEach(function(window){
 				var webWindow;
-//				alert(window.state);
+
 				if(window.state == "maximized"){
-//					alert(1);
+
 					webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, true);
 				}
 				else{
@@ -286,6 +300,127 @@ function optionsFunction(){
 				}
 			});
 }
+/**
+ * quickly saves the setup from the last setup loaded
+ */
+function quickSaveFunction(){
+
+    chrome.storage.sync.get(["curSetupName"], function(items){
+
+        var quickSaveButton = document.getElementById('quickSaveOption');
+
+        if(items == null || items.curSetupName == null || items.curSetupName == ''){
+
+            quickSaveButton.classList.add('noQuickSave');
+
+            setTimeout(function(){
+                quickSaveButton.classList.remove('noQuickSave');
+            }, 1000 );
+
+            saveCurrentSetUp();
+        }
+        else{
+            var curSetupName = items.curSetupName;
+
+            quickSaveButton.classList.add('yesQuickSave');
+
+            setTimeout(function(){
+                quickSaveButton.classList.remove('yesQuickSave');
+            }, 1000 );
+
+
+
+            chrome.windows.getAll({populate:true},
+                function(windows){
+
+                    var webSetup = new WebsiteSetup(curSetupName);
+                    //collect all the windows and respective tabs.
+                    windows.forEach(function(window){
+                        var webWindow;
+
+                        if(window.state == "maximized"){
+
+                            webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, true);
+                        }
+                        else{
+                            webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, false);
+                        }
+                        //ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
+                        //mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
+                        window.tabs.forEach(function(tab){
+                            if(tab.url != "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"){
+                                var webTab = new WebsiteTab(tab.url);
+                                webWindow.tabs.push(webTab);
+                            }
+                        });
+                        webSetup.windows.push(webWindow);
+
+                    });
+                    //Quick save the setup
+                    chrome.storage.sync.get(["webSetupsList"], function(items){
+
+                        var savedWebSetupsList = null;
+                        var name = curSetupName;
+
+                        var boolReturn = 0;
+                        var overWrite = -1;
+
+                        //items.webSetupsList is parsed already when it is saved, so we should turn it back into an object.
+                        savedWebSetupsList = items.webSetupsList
+
+                        for(var i=0; i<savedWebSetupsList.length; i++){
+                            var storedName = JSON.parse(savedWebSetupsList[i]).name;
+                            if(storedName == name) {
+                                overWrite = i;
+                                webSetup.removePrevWindows = JSON.parse(savedWebSetupsList[i]).removePrevWindows;
+                                break;
+                            }
+                            else{
+                                boolReturn = 1;
+                            }
+
+                        }
+
+                        //if something weird happen, just show error highlight
+                        if(boolReturn){
+                            quickSaveButton.classList.add('noQuickSave');
+
+                            setTimeout(function(){
+                                quickSaveButton.classList.remove('noQuickSave');
+                            }, 1000 );
+
+                            return;
+                        }
+                        else{
+                            savedWebSetupsList[overWrite] = JSON.stringify(webSetup);
+
+                            //saving quick save
+                            chrome.storage.sync.set({'webSetupsList': savedWebSetupsList},
+                                function(){
+                                    //message('Settings saved');
+                                    //this will open the options.html, but will first check if the tab is already open
+                                    //ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
+                                    //mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
+                                    chrome.tabs.query({url: "chrome-extension://ohfbaiaofiialjgaekdhidddnccpibjf/options.html"},
+                                        function(array_of_Tabs){
+                                            var tab = array_of_Tabs[0];
+                                            if(tab != null){
+                                                //send message to options tab to update the list
+                                                //of setups
+                                                chrome.runtime.sendMessage(
+                                                    {greeting: "update",
+                                                        payload: JSON.stringify(lastSavedSetup)});
+                                            }
+                                        });
+                                });
+                        }
+                    });
+                });
+        }
+    });
+}
+
+
 
 /*
  * Closes the chrome extension pop-up.
