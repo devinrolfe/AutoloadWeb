@@ -201,6 +201,7 @@ function fixFirstURL(ddList){
 }
 
 function addWindow(inputValue){
+
 	var actionCall = 1;
 	var firstWindow = 0;
 	var setupID = null;
@@ -305,8 +306,13 @@ function addWindow(inputValue){
 	}
     //TODO:
     //fixFirstURL(tempDL.getElementsByTagName("DD"));
-    fixFirstWindow(setupListDiv);
 
+    if(actionCall){
+        fixFirstWindow(this.parentNode.parentNode);
+    }
+    else {
+        fixFirstWindow(setupListDiv);
+    }
 	return windowDiv;
 }
 
@@ -324,8 +330,8 @@ function deleteWindow(){
 function fixFirstWindow(setupList){
 
     var tempWindows = setupList.getElementsByClassName('window');
-    var deleteButton = tempWindows[0].getElementsByTagName('input')[5];
 
+    var deleteButton = tempWindows[0].getElementsByTagName('input')[5];
 
     if(tempWindows.length < 2){
        deleteButton.classList.add('onlyOne');
@@ -790,7 +796,17 @@ function handleDrop(e) {
         }
         else {
             if (dragSrcElement.tagName == 'DD' && this.tagName == 'DIV') { //place dd at end of window url
+
                 this.getElementsByTagName('DL')[0].appendChild(dragSrcElement);
+
+                var urlButtons = dragSrcElement.getElementsByTagName('input');
+
+                if(urlButtons.length >= 3 && urlButtons[urlButtons.length - 1].value == "(+) add URL"){
+                    urlButtons[urlButtons.length - 2].classList.remove('onlyOne');
+                    dragSrcElement.removeChild(urlButtons[urlButtons.length - 1]);
+                    dragSrcElement.removeChild(this.getElementsByTagName('span')[0]);
+                }
+
             }
             else if (dragSrcElement.tagName == 'DD' && this.tagName == 'DD') { //place new dd in spot and move old down 1
                 this.parentNode.parentNode.getElementsByTagName('DL')[0].insertBefore(dragSrcElement, this);
@@ -820,8 +836,18 @@ function handleDrop(e) {
                         dragSrcElement.appendChild(tempAddButton);
                         dragSrcElement.appendChild(tempErrorDiv);
                     }
-
                 }
+                else{
+
+                    var urlButtons = dragSrcElement.getElementsByTagName('input');
+
+                    if(urlButtons.length >= 3 && urlButtons[urlButtons.length - 1].value == "(+) add URL"){
+                        urlButtons[urlButtons.length - 2].classList.remove('onlyOne');
+                        dragSrcElement.removeChild(urlButtons[urlButtons.length - 1]);
+                        dragSrcElement.removeChild(this.getElementsByTagName('span')[0]);
+                    }
+                }
+
             }
             else if (dragSrcElement.tagName == 'DIV' && this.tagName == 'DIV') { //place window in new spot
                 //check if target div is a window or setup, so we can decide where to put it
@@ -835,6 +861,16 @@ function handleDrop(e) {
                 else {//window place before window
                     this.parentNode.insertBefore(dragSrcElement, this);
                 }
+
+                fixFirstWindow(this.parentNode);
+
+                if (dragSrcElement != this.parentNode.getElementsByClassName('window'[0])) {
+                    var deleteButton = dragSrcElement.getElementsByTagName('input')[5];
+                    deleteButton.classList.remove('onlyOne');
+
+                }
+
+                dragSrcElementParent = dragSrcElementParent.parentNode;
             }
             //cleanup
             cleanupSetups(dragSrcElementParent);
@@ -851,6 +887,7 @@ function cleanupSetups(dragSrcElementParent) {
         var ddList = dragSrcElementParent.getElementsByTagName('DD');
 
         if (ddList.length < 1) {
+
             //add a new dd spot if window1
 
             var tempWindow = dragSrcElementParent.parentNode;
@@ -864,32 +901,65 @@ function cleanupSetups(dragSrcElementParent) {
         }
     }
     else if (dragSrcElementParent.className == 'setup') {
-        //do nothing
-    }
-    else if (dragSrcElementParent.tagName == 'DIV') { //check if window list is empty
 
-        var windowList = dragSrcElementParent.parentNode.getElementsByClassName('window');
+
+        var windowList = dragSrcElementParent.getElementsByClassName('window');
+
 
         if (windowList.length < 1) {
 
-            var tempSetup = dragSrcElementParent.parentNode;
+            if (dragSrcElementParent.id == 'setup1') { //add new window
 
-
-
-            if (tempSetup.id == 'setup1') { //add new window
 
                 document.getElementById('addWindowButton1').remove();
 
                 addWindow(1).getElementsByTagName("DL")[0].appendChild(createUrlSection(1, tabIdCount++, ''));
 
-
             }
             else{
-                dragSrcElementParent.parentNode.parentNode.remove();
-                //need to update delete button potentially
-                fixFirstURL(dragSrcElementParent.getElementsByTagName('DD'));
 
+                //TODO: NEED TO DELETE SETUP
+                var setup = dragSrcElementParent;
+                var parent = setup.parentNode;
+                var id = setup.id.slice("setup".length);
+                var name = document.getElementById("setupNameHiddenName" + id).value;
+
+                parent.removeChild(setup);
+
+                parent.remove
+                chrome.storage.sync.get(["webSetupsList"], function(items){
+
+                    var savedWebSetupsList = items.webSetupsList;
+
+                    for(var i=0; i<savedWebSetupsList.length; i++){
+                        var storedName = JSON.parse(savedWebSetupsList[i]).name;
+                        if(storedName == name){
+                            savedWebSetupsList.splice(i, 1);
+                            break;
+                        }
+                    }
+                    //saving the new list of setups by deleting this one.
+                    chrome.storage.sync.set({'webSetupsList': savedWebSetupsList}, function(){
+                        //message('Settings saved');
+                    });
+
+                });
             }
+        }
+    }
+    else if (dragSrcElementParent.tagName == 'DIV') { //check if window list is empty
+
+
+        var ddList = dragSrcElementParent.getElementsByTagName('DD');
+
+        if (ddList.length < 1) {
+            //add a new dd spot if window1
+
+            var tempSetup = dragSrcElementParent.parentNode;
+
+            tempSetup.removeChild(dragSrcElementParent);
+
+            cleanupSetups(tempSetup.parentNode);
         }
     }
 }

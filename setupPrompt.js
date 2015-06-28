@@ -67,6 +67,11 @@ function saveNewSetup(){
 			return;
 		}
 		else{
+
+            chrome.storage.sync.set({'curSetupName': name}, function(){
+
+            });
+
 			//need to load the savedLastSetup
 			chrome.storage.sync.get(["lastSavedWebSetup"], function(items){
 				var lastSavedSetup = JSON.parse(items.lastSavedWebSetup);
