@@ -406,7 +406,8 @@ function quickSaveFunction(){
                                                 //of setups
                                                 chrome.runtime.sendMessage(
                                                     {greeting: "update",
-                                                        payload: JSON.stringify(webSetup)});
+                                                        payload: JSON.stringify(webSetup),
+                                                        exists: true});
                                             }
                                         });
                                 });

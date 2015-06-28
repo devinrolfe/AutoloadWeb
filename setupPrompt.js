@@ -106,9 +106,13 @@ function saveNewSetup(){
 										if(tab != null){
 											//send message to options tab to update the list
 											//of setups
+                                            var setupExists = overWrite != -1;
+
+
 											chrome.runtime.sendMessage(
 													{greeting: "update",
-													 payload: JSON.stringify(lastSavedSetup)});
+													 payload: JSON.stringify(lastSavedSetup),
+                                                     exists: setupExists});
 										}
 									});
 							//need to close the window

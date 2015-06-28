@@ -2,6 +2,8 @@ var tabIdCount = 3;
 var windowIdCount = 2;
 var setupIdCount = 2;
 
+var EXISTS = false;
+
 //Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
 //	chrome.storage.sync.clear(); //use to clear storage
@@ -43,6 +45,7 @@ function setupListeners(){
 	chrome.runtime.onMessage.addListener(
 		  function(request) {
 		    if (request.greeting == "update")
+                EXISTS = request.exists;
 		    	updateModifySetupList(JSON.parse(request.payload));
 		  });
 	
@@ -591,7 +594,27 @@ function updateModifySetupList(webSetup){
     setupDiv.addEventListener('dragleave', handleDragLeave, false);
     setupDiv.addEventListener('drop', handleDrop, false);
 
-	mainDiv.appendChild(setupDiv);
+    var position = -1;
+
+    if(EXISTS){
+        var setups = mainDiv.getElementsByClassName('setup');
+
+        for(var i=0; i < setups.length; i++){
+
+            if(webSetup.name == setups[i].getElementsByTagName('input')[0].value){
+
+
+                mainDiv.insertBefore(setupDiv, setups[i]);
+                //mainDiv.removeChild(setups[i]);
+                position = i + 1;
+
+                break;
+            }
+        }
+    }
+    else{
+        mainDiv.appendChild(setupDiv);
+    }
 	//adding name div
 	var nameDiv = createNameSection(webSetup.name, setupID);
 	
@@ -658,6 +681,10 @@ function updateModifySetupList(webSetup){
 		}
         fixFirstURL(currentDL.getElementsByTagName("DD"));
 	}
+
+    if(EXISTS){
+        mainDiv.removeChild(mainDiv.getElementsByClassName('setup')[position]);
+    }
 }
 
 function cleanAddNewSetup(setup , setupID){
