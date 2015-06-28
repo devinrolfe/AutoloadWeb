@@ -265,7 +265,6 @@ function saveCurrentSetUp(){
 			chrome.windows.create(
 				{'url': 'setupPrompt.html', 'type': 'popup', 'width': w, 
 				'height': h, 'left': left, 'top': top, 'focused': true});	
-			
 	});
 		
 }
