@@ -213,15 +213,14 @@ function checkUrl(tempUrl){
 	var pattern3 = /www\./;
     var pattern4 = /http:\/\//;
 	
-	if(pattern1.test(tempUrl) || pattern2.test(tempUrl) || pattern3.test(tempUrl) || pattern4.test(tempUrl)){
+	if(pattern1.test(tempUrl) || pattern2.test(tempUrl) || pattern4.test(tempUrl)){
 		//done nothing to url since it is in good from
 	}
-	//else if(pattern3.test(tempUrl)){
-	//	tempUrl = "http://" + tempUrl;
-	//}
+	else if(pattern3.test(tempUrl)){
+		tempUrl = "http://" + tempUrl;
+	}
 	else{
-		//tempUrl = "http://www." + tempUrl;
-        tempUrl = "www." + tempUrl;
+        tempUrl = "http://www." + tempUrl;
 	}
 	return tempUrl;
 }
