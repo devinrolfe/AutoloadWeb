@@ -212,8 +212,9 @@ function checkUrl(tempUrl){
 	var pattern2 = /http:\/\/www\./;
 	var pattern3 = /www\./;
     var pattern4 = /http:\/\//;
+    var pattern5 = /https:\/\//;
 	
-	if(pattern1.test(tempUrl) || pattern2.test(tempUrl) || pattern4.test(tempUrl)){
+	if(pattern1.test(tempUrl) || pattern2.test(tempUrl) || pattern4.test(tempUrl) || pattern5.test(tempUrl)){
 		//done nothing to url since it is in good from
 	}
 	else if(pattern3.test(tempUrl)){
@@ -264,7 +265,9 @@ function saveCurrentSetUp(){
 			
 			chrome.windows.create(
 				{'url': 'setupPrompt.html', 'type': 'popup', 'width': w, 
-				'height': h, 'left': left, 'top': top, 'focused': true});	
+				'height': h, 'left': left, 'top': top, 'focused': true}, function(){
+                    this.close();
+                });
 	});
 		
 }
