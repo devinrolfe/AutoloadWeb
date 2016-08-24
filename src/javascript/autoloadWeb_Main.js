@@ -12,6 +12,7 @@ var prevWindows = null;
 
 // Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
+    console.log("Chrome Extension started");
     autoloadWebObject.loadSavedChoices_();
     //chrome.storage.sync.clear();
     //chrome.storage.sync.set({'curSetupName': ''}, function(){
@@ -86,7 +87,6 @@ var autoloadWebObject = {
         option1Button.setAttribute("name", "option1");
         option1Button.setAttribute("id", "option1");
         option1Button.setAttribute("value", "Save Current Setup");
-
         option1Button.addEventListener("click", saveCurrentSetUp);
         option1.appendChild(option1Button);
         optionsRow.appendChild(option1);
@@ -229,7 +229,7 @@ function checkUrl(tempUrl){
 }
 
 function saveCurrentSetUp(){
-
+    console.log("Starting saveCurrentSetup");
 	chrome.windows.getAll({populate:true},
 		function(windows){
 
