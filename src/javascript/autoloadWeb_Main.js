@@ -266,7 +266,7 @@ function saveCurrentSetUp(){
 		    var top = (screen.height/2)-(h/2);
 
 			chrome.windows.create(
-				{'url': 'view/setupPrompt.html', 'type': 'popup', 'width': w,
+				{'url': '/src/view/setupPrompt.html', 'type': 'popup', 'width': w,
 				'height': h, 'left': left, 'top': top, 'focused': true}, function(){
                     this.close();
                 });
