@@ -48,7 +48,7 @@ function setupListeners(){
                 EXISTS = request.exists;
 		    	updateModifySetupList(JSON.parse(request.payload));
 		  });
-	
+
 }
 /**
 Add a new tab for the window
@@ -58,9 +58,9 @@ function addUrl(inputValue){
 	if("string" == (typeof inputValue)){
 		value = inputValue;
 	}
-	
+
 	var tabIDNumber = tabIdCount++;
-	
+
 	var curWindow = this.parentNode.parentNode.parentNode;
 	curWindow.getElementsByTagName("DL")[0].appendChild(createUrlSection(0, tabIDNumber, value));
 
@@ -106,7 +106,7 @@ function createUrlSection(firstUrl, tabIDNumber, value){
 	tempAdd.setAttribute("id", "setupURL" + tabIDNumber);
 	tempAdd.setAttribute("size", "30");
 	tempDD.appendChild(tempAdd);
-	
+
 	if(firstUrl){
         createFirstUrlButtons(tempDD, tabIDNumber);
 	}
@@ -212,7 +212,7 @@ function addWindow(inputValue){
 		setupID = inputValue;
 		actionCall = 0;
 	}
-	
+
 	var windowIDNumber = windowIdCount++;
 	var tabIDNumber = tabIdCount++;
 	//add div for new window
@@ -235,7 +235,7 @@ function addWindow(inputValue){
 	else{
 		var setupListDiv = document.getElementById("setupList" + setupID);
 		var windowList = setupListDiv.getElementsByClassName("window");
-		
+
 		if(windowList.length < 1){
 			firstWindow = 1;
 			setupListDiv.appendChild(windowDiv);
@@ -249,32 +249,32 @@ function addWindow(inputValue){
 	var tempHeader = document.createElement("H3");
 	tempHeader.innerHTML = "Window";
 	windowDiv.appendChild(tempHeader);
-	
+
 	//add hidden values for the window position
 	var windowMaximized = document.createElement("INPUT");
 	windowMaximized.setAttribute("id", "windowMaximized" + windowIDNumber);
 	windowMaximized.setAttribute("type", "hidden");
 	windowMaximized.setAttribute("value", true);
 	windowDiv.appendChild(windowMaximized);
-	
+
 	var windowTop = document.createElement("INPUT");
 	windowTop.setAttribute("id", "windowTop" + windowIDNumber);
 	windowTop.setAttribute("type", "hidden");
 	windowTop.setAttribute("value", 1);
 	windowDiv.appendChild(windowTop);
-	
+
 	var windowLeft = document.createElement("INPUT");
 	windowLeft.setAttribute("id", "windowLeft" + windowIDNumber);
 	windowLeft.setAttribute("type", "hidden");
 	windowLeft.setAttribute("value", 1);
 	windowDiv.appendChild(windowLeft);
-	
+
 	var windowHeight = document.createElement("INPUT");
 	windowHeight.setAttribute("id", "windowHeight" + windowIDNumber);
 	windowHeight.setAttribute("type", "hidden");
 	windowHeight.setAttribute("value", 1);
 	windowDiv.appendChild(windowHeight);
-	
+
 	var windowWidth = document.createElement("INPUT");
 	windowWidth.setAttribute("id", "windowWidth" + windowIDNumber);
 	windowWidth.setAttribute("type", "hidden");
@@ -303,7 +303,7 @@ function addWindow(inputValue){
 
 	var urlInputList = document.getElementsByClassName("urlInput");
 	var tabIDNumber = tabIdCount++;
-	
+
 	if(actionCall){
 		tempDL.appendChild(createUrlSection(1, tabIDNumber, ""));
 	}
@@ -349,14 +349,14 @@ function deleteSetup(){
 	var parent = setup.parentNode;
 	var id = this.id.slice("deleteSetup".length);
 	var name = document.getElementById("setupNameHiddenName" + id).value;
-	
+
 	parent.removeChild(setup);
-	
+
 	parent.remove
 	chrome.storage.sync.get(["webSetupsList"], function(items){
-		
+
 		var savedWebSetupsList = items.webSetupsList;
-		
+
 		for(var i=0; i<savedWebSetupsList.length; i++){
 			var storedName = JSON.parse(savedWebSetupsList[i]).name;
 			if(storedName == name){
@@ -368,7 +368,7 @@ function deleteSetup(){
 		chrome.storage.sync.set({'webSetupsList': savedWebSetupsList}, function(){
 			//message('Settings saved');
 		});
-		
+
 	});
 }
 
@@ -382,7 +382,7 @@ function saveSetup(){
 		//alert("This is a modified setup");
 		isModifiedSetup = 1;
 	}
-	
+
 	var parent = this.parentNode;
 	var parentID = parseInt(parent.id.slice("setup".length));
 	var nameInput = parent.getElementsByClassName("name")[0];
@@ -456,15 +456,15 @@ function saveSetup(){
 		}
 
 		var webSetups = new WebsiteSetup(name);
-		
+
 		if(!document.getElementById("RemovePreviousWindows" + parentID).checked){
 			webSetups.removePrevWindows = false;
 		}
-		
-		
+
+
 		var tempWindows = parent.getElementsByClassName("window");
         //alert("length is " + tempWindows.length);
-		
+
 		var urlReturn  = 0;
 		for(i=0; i<tempWindows.length; i++){
 			var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
@@ -500,11 +500,11 @@ function saveSetup(){
 					errorUrlMsg.setAttribute("for", tempTabs[0].id);
 					errorUrlMsg.setAttribute("class", "errorMsg");
 					errorUrlMsg.innerHTML = "Please insert an URL.";
-				
+
 					//var windowNumber = parseInt(tempWindows[i].id.slice("window".length));
 					var tabNumber = parseInt(tempTabs[0].id.slice("setupURL".length));
 					var errorMsgDiv = document.getElementById("windowURLErrorMsg" + tabNumber);
-					errorMsgDiv.appendChild(errorUrlMsg);				
+					errorMsgDiv.appendChild(errorUrlMsg);
 				}
 				urlReturn = 1;
 			}
@@ -516,25 +516,25 @@ function saveSetup(){
 					errorMsgDiv.removeChild(errorMsgDiv.firstChild);
 				}
 			}
-			
+
 			for(var j=0; j<tempTabs.length; j++){
 				//check first url is not empty
 				if(tempTabs[j].value != ''){
 					var tempTab = new WebsiteTab(tempTabs[j].value);
 					tempWindow.tabs.push(tempTab);
-					
+
 				}
 			}
 			webSetups.windows.push(tempWindow);
 		}
 		if(urlReturn){
 			return;
-		}	
+		}
 
 		if(savedWebSetupsList == null){
 			savedWebSetupsList = [];
 		}
-		
+
 		if(!isModifiedSetup){
 			savedWebSetupsList.push(JSON.stringify(webSetups))
 		}
@@ -547,14 +547,14 @@ function saveSetup(){
 				}
 			}
 		}
-		
+
 		//alert("Save: " + JSON.stringify(savedWebSetupsList));
 
 		//saving new setup
 		chrome.storage.sync.set({'webSetupsList': savedWebSetupsList}, function(){
 			//message('Settings saved');
 		});
-		
+
 
 		//need to clear all the input to empty
 		if(parentID == 1){
@@ -567,18 +567,18 @@ function saveSetup(){
 		saveSetupStateMsg.setAttribute("class", "setupStateMsg");
 		saveSetupStateMsg.innerHTML = "Save was successful!";
 		saveSetupStateDiv.appendChild(saveSetupStateMsg);
-		
+
 		setTimeout(function(){
 			var saveSetupStateDiv = document.getElementById("setupStateMsg" + parentID);
 			var saveSetupStateMsg = document.getElementsByClassName("setupStateMsg")[0];
 			saveSetupStateDiv.removeChild(saveSetupStateMsg);
 		}, 5000, parentID);
-		
+
 		//1. NEED TO ADD A LISTENER TO THIS TO UPDATE MODIFY INFO
 		if(!isModifiedSetup){
 			updateModifySetupList(webSetups);
 		}
-	});	
+	});
 }
 
 function updateModifySetupList(webSetup){
@@ -617,13 +617,13 @@ function updateModifySetupList(webSetup){
     }
 	//adding name div
 	var nameDiv = createNameSection(webSetup.name, setupID);
-	
+
 	setupDiv.appendChild(nameDiv);
-	
+
 	if(!webSetup.removePrevWindows){
 		document.getElementById("RemovePreviousWindows" + setupID).checked = false;
 	}
-	
+
 	//add the div that will contain the list of windows
 	var setupListDiv = document.createElement("DIV");
 	setupListDiv.setAttribute("id", "setupList" + setupID);
@@ -639,18 +639,18 @@ function updateModifySetupList(webSetup){
 	saveSetupButton.setAttribute("value", "Save");
 	saveSetupButton.addEventListener("click", saveSetup);
 	setupDiv.appendChild(saveSetupButton);
-	
+
 	var deleteSetupButton = document.createElement("INPUT");
 	deleteSetupButton.setAttribute("id", "deleteSetup" + setupID);
 	deleteSetupButton.setAttribute("type", "button");
 	deleteSetupButton.setAttribute("value", "Delete");
 	deleteSetupButton.addEventListener("click", deleteSetup);
 	setupDiv.appendChild(deleteSetupButton);
-	
+
 	var setupStateDiv = document.createElement("DIV");
 	setupStateDiv.setAttribute("id", "setupStateMsg" + setupID);
 	setupDiv.appendChild(setupStateDiv);
-	
+
 	//adding the windows for the current WebsiteSetup object.
 	for(var j=0; j<webSetup.windows.length;j++){
 		//create a new window, function will add the add window or delete window buttons
@@ -664,13 +664,13 @@ function updateModifySetupList(webSetup){
 		document.getElementById("windowHeight" + (windowIdCount-1)).value = webSetup.windows[j].height;
 		document.getElementById("windowWidth" + (windowIdCount-1)).value = webSetup.windows[j].width;
 		document.getElementById("windowMaximized" + (windowIdCount-1)).value = webSetup.windows[j].isMaximized;
-				
-		
-		
+
+
+
 		var currentDL = currentWindow.getElementsByTagName("DL")[0];
 		//create new url inputs for each in the window
 		for(var k=0; k<webSetup.windows[j].tabs.length; k++){
-			
+
 			var urlName = webSetup.windows[j].tabs[k].url;
 			if(k == 0){
 				currentDL.appendChild(createUrlSection(1, tabIdCount++, urlName));
@@ -765,21 +765,21 @@ function createNameSection(name, setupID){
 	var validDiv = document.createElement("DIV");
 	validDiv.setAttribute("id", "setupNameValid" + setupID);
 	nameDiv.appendChild(validDiv);
-	
+
 	var checkBox =document.createElement("INPUT");
 	checkBox.setAttribute("id", "RemovePreviousWindows" + setupID);
 	checkBox.setAttribute("type", "checkbox");
 	checkBox.setAttribute("value", "RemovePreviousWindows");
 	checkBox.setAttribute("checked", true);
 	nameDiv.appendChild(checkBox);
-	
+
 	var labelForCheckBox =document.createElement("LABEL");
 	labelForCheckBox.setAttribute("id", "RemovePreviousWindowsLabel" + setupID);
 	labelForCheckBox.setAttribute("for", "RemovePreviousWindows" + setupID);
 	labelForCheckBox.innerHTML = "Remove all current windows";
 	nameDiv.appendChild(labelForCheckBox);
-	
-	
+
+
 	return nameDiv;
 }
 
