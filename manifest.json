@@ -4,8 +4,7 @@
   "name": "Autoload Web",
   
   "options_ui": {
-
-   	"page": "options.html"
+   	"page": "view/options.html"
   },
 
   "options_page": "options.html",
@@ -23,6 +22,6 @@
   "browser_action": {
     "default_icon": "images/autoLoadWebPic.png",
     "default_title": "Autoload Web",
-    "default_popup": "autoloadWeb_Main.html"
+    "default_popup": "view/autoloadWeb_Main.html"
   }
 } 
