@@ -1,7 +1,5 @@
-//oonpekkcdidfjkfkmcokdlmanefiocle LOCAL
+//ipjccbebefegfbclhobggiioeholkiii LOCAL
 //mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
-
-
 
 var windowId = null;
 var listOfWindowIds = []
@@ -208,15 +206,20 @@ function loadWindow(window, focus, lastWindow){
 function checkUrl(tempUrl){
 	//need to parse the first characters in url to see if match
 	//1. https://www
-	//2. http://www
-	//3. www
+    //2. http://www
+    //3. www
 	var pattern1 = /https:\/\/www\./;
 	var pattern2 = /http:\/\/www\./;
 	var pattern3 = /www\./;
     var pattern4 = /http:\/\//;
     var pattern5 = /https:\/\//;
+    var pattern6 = /chrome-extension:\/\//;
 
-	if(pattern1.test(tempUrl) || pattern2.test(tempUrl) || pattern4.test(tempUrl) || pattern5.test(tempUrl)){
+	if(pattern1.test(tempUrl) ||
+       pattern2.test(tempUrl) ||
+       pattern4.test(tempUrl) ||
+       pattern5.test(tempUrl) ||
+       pattern6.test(tempUrl)){
 		//done nothing to url since it is in good from
 	}
 	else if(pattern3.test(tempUrl)){
@@ -245,10 +248,10 @@ function saveCurrentSetUp(){
 				else{
 					webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, false);
 				}
-				//ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
+				//ipjccbebefegfbclhobggiioeholkiii LOCAL
 				//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
 				window.tabs.forEach(function(tab){
-					if(tab.url != "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"){
+					if(tab.url != "chrome-extension://ipjccbebefegfbclhobggiioeholkiii/options.html"){
 						var webTab = new WebsiteTab(tab.url);
 						webWindow.tabs.push(webTab);
 					}
@@ -283,9 +286,9 @@ function optionsFunction(){
 	//window then it will be moved to the current window.
 
 	//this will open the options.html, but will first check if the tab is already open
-	//ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
+	//ipjccbebefegfbclhobggiioeholkiii LOCAL
 	//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
-	chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"},
+	chrome.tabs.query({url: "chrome-extension://ipjccbebefegfbclhobggiioeholkiii/options.html"},
 			function(array_of_Tabs){
 				var tab = array_of_Tabs[0];
 				if(tab != null){
@@ -299,7 +302,7 @@ function optionsFunction(){
 						});
 				}
 				else{
-					chrome.tabs.create({url: "options.html"});
+					chrome.tabs.create({url: "/src/view/options.html"});
 				}
 			});
 }
@@ -345,10 +348,10 @@ function quickSaveFunction(){
                         else{
                             webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, false);
                         }
-                        //ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
+                        //oonpekkcdidfjkfkmcokdlmanefiocle LOCAL
                         //mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
                         window.tabs.forEach(function(tab){
-                            if(tab.url != "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"){
+                            if(tab.url != "chrome-extension://oonpekkcdidfjkfkmcokdlmanefiocle/options.html"){
                                 var webTab = new WebsiteTab(tab.url);
                                 webWindow.tabs.push(webTab);
                             }
@@ -400,9 +403,9 @@ function quickSaveFunction(){
                                 function(){
                                     //message('Settings saved');
                                     //this will open the options.html, but will first check if the tab is already open
-                                    //ohfbaiaofiialjgaekdhidddnccpibjf LOCAL
+                                    //ipjccbebefegfbclhobggiioeholkiii LOCAL
                                     //mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
-                                    chrome.tabs.query({url: "chrome-extension://mifafbjbnhpmdjngkhnmfjdlefdgileh/options.html"},
+                                    chrome.tabs.query({url: "chrome-extension://ipjccbebefegfbclhobggiioeholkiii/options.html"},
                                         function(array_of_Tabs){
                                             var tab = array_of_Tabs[0];
                                             if(tab != null){

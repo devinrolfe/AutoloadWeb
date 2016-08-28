@@ -6,7 +6,7 @@
   "options_ui": {
    	"page": "src/view/options.html"
   },
-  "options_page": "options.html",
+  "options_page": "src/view/options.html",
   "description": "This extension loads websites automatically with a click of a button.",
   "version": "1.1.0",
   "permissions": [
