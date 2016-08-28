@@ -10,7 +10,7 @@ var prevWindows = null;
 
 // Run our extension script as soon as the document's DOM is ready.
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Chrome Extension started");
+    console.log("Started autoloadWeb_Main");
     autoloadWebObject.loadSavedChoices_();
     //chrome.storage.sync.clear();
     //chrome.storage.sync.set({'curSetupName': ''}, function(){
