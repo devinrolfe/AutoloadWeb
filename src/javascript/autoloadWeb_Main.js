@@ -1,5 +1,4 @@
-//ipjccbebefegfbclhobggiioeholkiii LOCAL
-//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
+var chrome_extension_id = null;
 
 var windowId = null;
 var listOfWindowIds = []
@@ -12,6 +11,13 @@ var prevWindows = null;
 document.addEventListener('DOMContentLoaded', function () {
     console.log("Started autoloadWeb_Main");
     autoloadWebObject.loadSavedChoices_();
+
+    if (isDevMode()) {
+        chrome_extension_id = ChromeExtensionID.LOCAL;
+    } else {
+        chrome_extension_id = ChromeExtensionID.STORE;
+    }
+
     //chrome.storage.sync.clear();
     //chrome.storage.sync.set({'curSetupName': ''}, function(){
     //});
@@ -248,10 +254,8 @@ function saveCurrentSetUp(){
 				else{
 					webWindow = new WebsiteWindow(window.top, window.left, window.height, window.width, false);
 				}
-				//ipjccbebefegfbclhobggiioeholkiii LOCAL
-				//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
 				window.tabs.forEach(function(tab){
-					if(tab.url != "chrome-extension://ipjccbebefegfbclhobggiioeholkiii/options.html"){
+					if(tab.url != "chrome-extension://" + chrome_extension_id + "/options.html"){
 						var webTab = new WebsiteTab(tab.url);
 						webWindow.tabs.push(webTab);
 					}
@@ -286,9 +290,7 @@ function optionsFunction(){
 	//window then it will be moved to the current window.
 
 	//this will open the options.html, but will first check if the tab is already open
-	//ipjccbebefegfbclhobggiioeholkiii LOCAL
-	//mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
-	chrome.tabs.query({url: "chrome-extension://ipjccbebefegfbclhobggiioeholkiii/options.html"},
+	chrome.tabs.query({url: "chrome-extension://" + chrome_extension_id + "/options.html"},
 			function(array_of_Tabs){
 				var tab = array_of_Tabs[0];
 				if(tab != null){
@@ -403,9 +405,7 @@ function quickSaveFunction(){
                                 function(){
                                     //message('Settings saved');
                                     //this will open the options.html, but will first check if the tab is already open
-                                    //ipjccbebefegfbclhobggiioeholkiii LOCAL
-                                    //mifafbjbnhpmdjngkhnmfjdlefdgileh STORE
-                                    chrome.tabs.query({url: "chrome-extension://ipjccbebefegfbclhobggiioeholkiii/options.html"},
+                                    chrome.tabs.query({url: "chrome-extension://" + chrome_extension_id + "/options.html"},
                                         function(array_of_Tabs){
                                             var tab = array_of_Tabs[0];
                                             if(tab != null){
